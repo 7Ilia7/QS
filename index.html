@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Quality Service Hair — Наращування волосся у Києві</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Преміум наращування волосся у Києві. Мікрокапсульна технологія, натуральне волосся, індивідуальний підбір. Запис онлайн." />
+  <link rel="canonical" href="https://example.com/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Quality Service Hair — Наращування волосся у Києві" />
+  <meta property="og:description" content="Натуральна краса без компромісів. Портфоліо, ціни, відгуки." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://example.com/" />
+  <meta property="og:image" content="assets/og-cover.jpg" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="assets/favicon.png" />
+
+  <!-- Fonts: preconnect + preload -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+  <!-- Preload hero image for LCP -->
+  <link rel="preload" as="image" href="assets/hero.jpg" imagesrcset="assets/hero.jpg 1280w, assets/hero@2x.jpg 1920w" imagesizes="100vw">
+
+  <!-- Critical CSS (маленький блок, остальное — в styles.css) -->
+  <style>
+    html{scroll-behavior:smooth}
+    body{opacity:0; transition:opacity .25s ease}
+    body.ready{opacity:1}
+    .header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.9); backdrop-filter:saturate(180%) blur(10px); border-bottom:1px solid #eee}
+    .header.scrolled{border-bottom-color:#e6e6e6}
+    @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto} body{transition:none}}
+  </style>
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": ["Organization","LocalBusiness"],
+    "name": "Quality Service Hair Studio",
+    "url": "https://example.com",
+    "logo": "https://example.com/assets/logo.svg",
+    "image": "https://example.com/assets/og-cover.jpg",
+    "sameAs": ["https://www.instagram.com/qualityservice.hair"],
+    "address": {"@type": "PostalAddress", "addressLocality": "Київ", "addressCountry": "UA"},
+    "telephone": "+380000000000",
+    "priceRange": "₴₴"
+  }
+  </script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header" role="banner" aria-label="Головна навігація">
+    <div class="container header__inner">
+      <a href="#hero" class="logo" aria-label="Перейти до початку">
+        <img src="assets/logo.svg" alt="Quality Service Hair" width="120" height="32" />
+      </a>
+      <nav class="nav" id="nav" role="navigation" aria-label="Основне меню">
+        <a href="#about">Про студію</a>
+        <a href="#services">Послуги</a>
+        <a href="#portfolio">Портфоліо</a>
+        <a href="#reviews">Відгуки</a>
+        <a href="#pricing">Ціни</a>
+        <a href="#contact">Контакти</a>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="Відкрити меню" aria-controls="nav" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero reveal" id="hero" role="region" aria-label="Наращування волосся">
+    <div class="hero__media"
+         style="background-image:url('assets/hero.jpg')"
+         role="img"
+         aria-label="Естетичне фото клієнтки зі стильним волоссям">
+    </div>
+    <div class="container hero__content">
+      <h1>Професійне <em>наращування волосся</em> у Києві</h1>
+      <p>Натуральна краса, створена з турботою про кожен волосок. Мікрокапсульна технологія без шкоди.</p>
+      <div class="hero__cta">
+        <a class="btn btn--primary" href="#contact">Записатись</a>
+        <a class="btn btn--ghost" target="_blank" rel="noopener" href="https://www.instagram.com/qualityservice.hair" aria-label="Переглянути Instagram">Instagram</a>
+      </div>
+      <div class="hero__badges" aria-label="Переваги">
+        <span>Преміум матеріали</span>
+        <span>5+ років досвіду</span>
+        <span>Гарантія якості</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="section section--about reveal" id="about" role="region" aria-labelledby="about-title">
+    <div class="container grid grid--2">
+      <div>
+        <h2 class="title" id="about-title">Про студію</h2>
+        <p>Ми — <strong>Quality Service</strong>, спеціалізуємось на мікрокапсульному наращуванні. Працюємо лише з натуральним волоссям та італійськими кератиновими капсулами. Підбираємо об’єм та довжину індивідуально під вашу структуру волосся.</p>
+        <ul class="list">
+          <li>Максимально непомітні капсули</li>
+          <li>Дбайливий догляд та рекомендації</li>
+          <li>Корекція та зняття без пошкоджень</li>
+        </ul>
+        <div class="actions">
+          <a class="btn btn--primary" href="#services">Дивитись послуги</a>
+        </div>
+      </div>
+      <div class="about__media">
+        <img
+          src="assets/about.jpg"
+          srcset="assets/about.jpg 800w, assets/about@2x.jpg 1400w"
+          sizes="(max-width: 720px) 100vw, 50vw"
+          alt="Майстер за роботою"
+          width="800" height="600" loading="lazy" decoding="async" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="section reveal" id="services" aria-label="Послуги">
+    <div class="container">
+      <h2 class="title center">Послуги</h2>
+      <div class="cards">
+        <article class="card">
+          <img
+            src="assets/service-1.jpg"
+            srcset="assets/service-1.webp 800w, assets/service-1.jpg 800w"
+            sizes="(max-width: 720px) 100vw, 25vw"
+            alt="Мікрокапсульне наращування"
+            width="800" height="600" loading="lazy" decoding="async" />
+          <h3>Мікрокапсульне наращування</h3>
+          <p>Легкі, непомітні капсули. Індивідуальний підбір відтінку та довжини.</p>
+        </article>
+        <article class="card">
+          <img
+            src="assets/service-2.jpg"
+            srcset="assets/service-2.webp 800w, assets/service-2.jpg 800w"
+            sizes="(max-width: 720px) 100vw, 25vw"
+            alt="Корекція"
+            width="800" height="600" loading="lazy" decoding="async" />
+          <h3>Корекція</h3>
+          <p>Оновлення прикріплення без шкоди для вашого волосся.</p>
+        </article>
+        <article class="card">
+          <img
+            src="assets/service-3.jpg"
+            srcset="assets/service-3.webp 800w, assets/service-3.jpg 800w"
+            sizes="(max-width: 720px) 100vw, 25vw"
+            alt="Зняття"
+            width="800" height="600" loading="lazy" decoding="async" />
+          <h3>Зняття</h3>
+          <p>Дбайливе зняття з використанням професійних засобів.</p>
+        </article>
+        <article class="card">
+          <img
+            src="assets/service-4.jpg"
+            srcset="assets/service-4.webp 800w, assets/service-4.jpg 800w"
+            sizes="(max-width: 720px) 100vw, 25vw"
+            alt="Догляд"
+            width="800" height="600" loading="lazy" decoding="async" />
+          <h3>Догляд</h3>
+          <p>Підбір домашнього догляду для довготривалого результату.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio -->
+  <section class="section section--alt reveal" id="portfolio" aria-label="Портфоліо">
+    <div class="container">
+      <div class="section__head">
+        <h2 class="title">Портфоліо</h2>
+        <a class="link" target="_blank" rel="noopener" href="https://www.instagram.com/qualityservice.hair">Більше в Instagram →</a>
+      </div>
+      <div class="gallery" id="gallery">
+        <!-- Приклад: обов’язково width/height для CLS -->
+        <a href="assets/portfolio/1.jpg">
+          <img src="assets/portfolio/1_thumb.jpg"
+               alt="Робота 1"
+               width="600" height="800"
+               loading="lazy" decoding="async" />
+        </a>
+        <a href="assets/portfolio/2.jpg">
+          <img src="assets/portfolio/2_thumb.jpg"
+               alt="Робота 2"
+               width="600" height="800"
+               loading="lazy" decoding="async" />
+        </a>
+        <a href="assets/portfolio/3.jpg">
+          <img src="assets/portfolio/3_thumb.jpg"
+               alt="Робота 3"
+               width="600" height="800"
+               loading="lazy" decoding="async" />
+        </a>
+        <a href="assets/portfolio/4.jpg">
+          <img src="assets/portfolio/4_thumb.jpg"
+               alt="Робота 4"
+               width="600" height="800"
+               loading="lazy" decoding="async" />
+        </a>
+        <a href="assets/portfolio/5.jpg">
+          <img src="assets/portfolio/5_thumb.jpg"
+               alt="Робота 5"
+               width="600" height="800"
+               loading="lazy" decoding="async" />
+        </a>
+        <a href="assets/portfolio/6.jpg">
+          <img src="assets/portfolio/6_thumb.jpg"
+               alt="Робота 6"
+               width="600" height="800"
+               loading="lazy" decoding="async" />
+        </a>
+      </div>
+      <!-- Лайтбокс создадим лениво в JS -->
+      <div id="lightbox" class="lightbox" aria-hidden="true" hidden>
+        <button class="lightbox__close" aria-label="Закрити">&times;</button>
+        <img id="lightboxImg" alt="Перегляд зображення" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section class="section reveal" id="reviews" aria-label="Відгуки">
+    <div class="container">
+      <h2 class="title center">Відгуки</h2>
+      <div class="reviews">
+        <figure class="review"><blockquote>“Нарощення виглядає натурально, легко розчісується. Дуже задоволена результатом!”</blockquote><figcaption>Олена ★★★★★</figcaption></figure>
+        <figure class="review"><blockquote>“Майстер делікатний, все пояснює. Капсули непомітні — це любов.”</blockquote><figcaption>Марія ★★★★★</figcaption></figure>
+        <figure class="review"><blockquote>“Пройшло 5 місяців — вигляд супер. Рекомендую!”</blockquote><figcaption>Світлана ★★★★★</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section section--alt reveal" id="pricing" aria-label="Ціни">
+    <div class="container">
+      <h2 class="title center">Орієнтовні ціни</h2>
+      <div class="pricegrid">
+        <div class="pricecard"><h3>Мікрокапсульне</h3><p class="price">від 6000 ₴</p><p class="muted">Точна вартість після консультації</p></div>
+        <div class="pricecard"><h3>Корекція</h3><p class="price">від 3500 ₴</p><p class="muted">Залежить від об’єму та довжини</p></div>
+        <div class="pricecard"><h3>Зняття</h3><p class="price">від 1500 ₴</p><p class="muted">Дбайливо, без пошкоджень</p></div>
+      </div>
+      <div class="center actions">
+        <a class="btn btn--primary" href="#contact">Безкоштовна консультація</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Us -->
+  <section class="section reveal" id="whyus" aria-label="Чому ми">
+    <div class="container">
+      <h2 class="title center">Чому обирають нас</h2>
+      <div class="icons">
+        <div class="iconbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 7 7 .5-5.5 4.6L18 22l-6-3.5L6 22l1.5-7.9L2 9.5 9 9l3-7z"/></svg><h4>Преміум матеріали</h4><p>Італійський кератин та натуральне волосся.</p></div>
+        <div class="iconbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1a11 11 0 100 22 11 11 0 000-22zm1 11V6h-2v8h6v-2z"/></svg><h4>Досвід 5+ років</h4><p>Сотні задоволених клієнток.</p></div>
+        <div class="iconbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l6 6L20 6"/></svg><h4>Гарантія безпеки</h4><p>Техніка без шкоди для вашого волосся.</p></div>
+        <div class="iconbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 6-9 6-9-6 9-6zm0 13l9-6v11H3V10l9 6z"/></svg><h4>Естетика & сервіс</h4><p>Затишна студія та турботливе ставлення.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="section section--alt reveal" id="contact" aria-label="Контакти та запис">
+    <div class="container grid grid--2">
+      <div>
+        <h2 class="title">Записатись</h2>
+        <p>Залиште номер — ми передзвонимо протягом 15 хвилин.</p>
+        <form id="contactForm" class="form" action="#" method="post" novalidate>
+          <label>Ім’я <input type="text" name="name" required placeholder="Ваше ім’я" inputmode="text" autocomplete="name" /></label>
+          <label>Телефон <input type="tel" name="phone" required placeholder="+380..." inputmode="tel" autocomplete="tel" /></label>
+          <label>Коментар <textarea name="message" rows="4" placeholder="Бажана дата/послуга"></textarea></label>
+          <button type="submit" class="btn btn--primary">Надіслати</button>
+          <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="contact__links" aria-label="Швидкі контакти">
+          <a class="chip" target="_blank" rel="noopener" href="https://www.instagram.com/qualityservice.hair">Instagram</a>
+          <a class="chip" target="_blank" rel="noopener" href="https://wa.me/380000000000?text=Хочу%20записатися%20на%20наращування">WhatsApp</a>
+          <a class="chip" href="tel:+380000000000">+38 (000) 000-00-00</a>
+        </div>
+      </div>
+      <div class="mapwrap" role="img" aria-label="Карта розташування студії">
+        <iframe title="Карта студії" src="https://maps.google.com/maps?q=Kyiv&t=&z=14&ie=UTF8&iwloc=&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="container footer__inner">
+      <div class="foot__brand">
+        <img src="assets/logo.svg" alt="" width="120" height="26" />
+        <span>© 2025 Quality Service Hair</span>
+      </div>
+      <div class="foot__links">
+        <a href="#hero">Вгору ↑</a>
+        <a href="#" onclick="alert('Політика конфіденційності буде додана'); return false;">Політика</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll-to-top -->
+  <button id="toTop" class="to-top" aria-label="Прокрутити догори" hidden>↑</button>
+
+  <!-- Скрипти: defer для FCP/FID -->
+  <script src="script.js" defer></script>
+</body>
+</html>
