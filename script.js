@@ -92,6 +92,90 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   });
 });
 
+// Lightweight slider for video секції
+document.querySelectorAll('[data-slider]').forEach(slider => {
+  const track = slider.querySelector('[data-slider-track]');
+  if (!track) return;
+  const items = Array.from(track.children);
+  if (!items.length) return;
+
+  const prevBtn = slider.querySelector('[data-slider-prev]');
+  const nextBtn = slider.querySelector('[data-slider-next]');
+  const dotsHost = slider.querySelector('[data-slider-dots]');
+  const dots = [];
+  let activeIndex = 0;
+  let rafId = 0;
+
+  if (dotsHost) {
+    if (!dotsHost.children.length) {
+      items.forEach((_, idx) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'extensions__dot';
+        dot.dataset.index = String(idx);
+        dot.setAttribute('aria-label', `Переглянути відео ${idx + 1}`);
+        dotsHost.appendChild(dot);
+      });
+    }
+    dotsHost.querySelectorAll('button').forEach((dot, idx) => {
+      dot.addEventListener('click', () => goTo(idx));
+      dots.push(dot);
+    });
+  }
+
+  function setActive(index) {
+    activeIndex = index;
+    items.forEach((item, i) => item.classList.toggle('is-active', i === index));
+    dots.forEach((dot, i) => {
+      const isCurrent = i === index;
+      dot.classList.toggle('is-active', isCurrent);
+      dot.setAttribute('aria-current', isCurrent ? 'true' : 'false');
+    });
+    if (prevBtn) prevBtn.disabled = index === 0;
+    if (nextBtn) nextBtn.disabled = index === items.length - 1;
+  }
+
+  function goTo(index, behavior = 'smooth') {
+    const bounded = Math.max(0, Math.min(index, items.length - 1));
+    const target = items[bounded];
+    if (!target) return;
+    const left = target.offsetLeft - track.offsetLeft;
+    track.scrollTo({ left, behavior });
+  }
+
+  function handleScroll() {
+    const viewportCenter = track.scrollLeft + track.clientWidth / 2;
+    let bestIndex = activeIndex;
+    let bestDistance = Number.POSITIVE_INFINITY;
+    items.forEach((item, idx) => {
+      const itemCenter = item.offsetLeft + item.offsetWidth / 2;
+      const distance = Math.abs(itemCenter - viewportCenter);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        bestIndex = idx;
+      }
+    });
+    setActive(bestIndex);
+  }
+
+  prevBtn?.addEventListener('click', () => goTo(activeIndex - 1));
+  nextBtn?.addEventListener('click', () => goTo(activeIndex + 1));
+
+  track.addEventListener('scroll', () => {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(handleScroll);
+  }, { passive: true });
+
+  window.addEventListener('resize', () => {
+    setActive(activeIndex);
+    goTo(activeIndex, 'auto');
+  });
+
+  // Ініціалізація
+  setActive(0);
+  goTo(0, 'auto');
+});
+
 // IntersectionObserver для плавного появления секций
 const io = 'IntersectionObserver' in window ? new IntersectionObserver((entries) => {
   for (const e of entries) {
