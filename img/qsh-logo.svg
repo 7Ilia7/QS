@@ -1,0 +1,35 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFD167"/>
+      <stop offset="50%" stop-color="#FF9A1F"/>
+      <stop offset="100%" stop-color="#FF6A00"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="rgba(255, 209, 103, .65)"/>
+      <stop offset="100%" stop-color="rgba(255, 209, 103, 0)"/>
+    </radialGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <rect width="256" height="256" fill="none"/>
+  <circle cx="128" cy="120" r="86" fill="none" stroke="#0B0B0F" stroke-width="18" filter="url(#softShadow)"/>
+  <path d="M168 170 L212 212" stroke="#0B0B0F" stroke-width="18" stroke-linecap="round" filter="url(#softShadow)"/>
+  <circle cx="128" cy="120" r="72" fill="url(#glow)"/>
+  <path fill="url(#gold)" d="
+    M118,58
+    C150,78 160,110 142,140
+    C126,165 126,184 138,196
+    C148,206 162,205 174,196
+    C156,212 138,214 124,206
+    C104,194 104,170 120,144
+    C138,114 134,90 112,68
+    Z" filter="url(#softShadow)"/>
+  <path fill="white" opacity=".22" d="
+    M130,74
+    C148,92 150,114 138,134
+    C130,146 126,160 132,170
+    C128,166 124,156 128,142
+    C136,118 136,96 130,74 Z"/>
+</svg>
