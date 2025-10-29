@@ -14,10 +14,10 @@
   <meta property="og:description" content="Натуральна краса без компромісів. Портфоліо, ціни, відгуки." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://example.com/" />
-  <meta property="og:image" content="assets/og-cover.jpg" />
+  <meta property="og:image" content="img/og-cover.jpg" />
 
   <!-- Favicon -->
-  <link rel="icon" href="assets/favicon.png" />
+  <link rel="icon" href="img/logo.png" />
 
   <!-- Fonts: preconnect + preload -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +26,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 
   <!-- Preload hero image for LCP -->
-  <link rel="preload" as="image" href="assets/hero.jpg" imagesrcset="assets/hero.jpg 1280w, assets/hero@2x.jpg 1920w" imagesizes="100vw">
+  <link rel="preload" as="image" href="img/hero-dark.jpg" imagesrcset="img/hero-dark.jpg 1280w, img/hero-dark@2x.jpg 1920w" imagesizes="100vw">
 
   <!-- Critical CSS (маленький блок, остальное — в styles.css) -->
   <style>
@@ -47,8 +47,8 @@
     "@type": ["Organization","LocalBusiness"],
     "name": "Quality Service Hair Studio",
     "url": "https://example.com",
-    "logo": "https://example.com/assets/logo.svg",
-    "image": "https://example.com/assets/og-cover.jpg",
+    "logo": "https://example.com/img/logo.svg",
+    "image": "https://example.com/img/og-cover.jpg",
     "sameAs": ["https://www.instagram.com/qualityservice.hair"],
     "address": {"@type": "PostalAddress", "addressLocality": "Київ", "addressCountry": "UA"},
     "telephone": "+380000000000",
@@ -61,7 +61,7 @@
   <header class="header" role="banner" aria-label="Головна навігація">
     <div class="container header__inner">
       <a href="#hero" class="logo" aria-label="Перейти до початку">
-        <img src="assets/logo.svg" alt="Quality Service Hair" width="120" height="32" />
+        <img src="img/logo.png" alt="Quality Service Hair" width="120" height="32" />
       </a>
       <nav class="nav" id="nav" role="navigation" aria-label="Основне меню">
         <a href="#about">Про студію</a>
@@ -80,7 +80,7 @@
   <!-- Hero -->
   <section class="hero reveal" id="hero" role="region" aria-label="Наращування волосся">
     <div class="hero__media"
-         style="background-image:url('assets/hero.jpg')"
+         style="background-image: url('img/backmain.webp')"
          role="img"
          aria-label="Естетичне фото клієнтки зі стильним волоссям">
     </div>
@@ -116,8 +116,8 @@
       </div>
       <div class="about__media">
         <img
-          src="assets/about.jpg"
-          srcset="assets/about.jpg 800w, assets/about@2x.jpg 1400w"
+          src="img/masteronwork.jpg"
+          srcset="img/masteronwork.jpg 800w, img/masteronwork.jpg 1400w"
           sizes="(max-width: 720px) 100vw, 50vw"
           alt="Майстер за роботою"
           width="800" height="600" loading="lazy" decoding="async" />
@@ -132,8 +132,8 @@
       <div class="cards">
         <article class="card">
           <img
-            src="assets/service-1.jpg"
-            srcset="assets/service-1.webp 800w, assets/service-1.jpg 800w"
+            src="img/poslugi/IMG_0685.webp"
+            srcset="img/poslugi/IMG_0685.webp 800w, img/poslugi/IMG_0685.jpg 800w"
             sizes="(max-width: 720px) 100vw, 25vw"
             alt="Мікрокапсульне наращування"
             width="800" height="600" loading="lazy" decoding="async" />
@@ -142,8 +142,8 @@
         </article>
         <article class="card">
           <img
-            src="assets/service-2.jpg"
-            srcset="assets/service-2.webp 800w, assets/service-2.jpg 800w"
+            src="img/poslugi/IMG_0692.webp"
+            srcset="img/poslugi/IMG_0692.webp 800w, img/poslugi/IMG_0692.jpg 800w"
             sizes="(max-width: 720px) 100vw, 25vw"
             alt="Корекція"
             width="800" height="600" loading="lazy" decoding="async" />
@@ -152,8 +152,8 @@
         </article>
         <article class="card">
           <img
-            src="assets/service-3.jpg"
-            srcset="assets/service-3.webp 800w, assets/service-3.jpg 800w"
+            src="img/poslugi/IMG_1927.webp"
+            srcset="img/poslugi/IMG_1927.webp 800w, img/poslugi/IMG_1927.webp 800w"
             sizes="(max-width: 720px) 100vw, 25vw"
             alt="Зняття"
             width="800" height="600" loading="lazy" decoding="async" />
@@ -162,8 +162,8 @@
         </article>
         <article class="card">
           <img
-            src="assets/service-4.jpg"
-            srcset="assets/service-4.webp 800w, assets/service-4.jpg 800w"
+            src="img/poslugi/IMG_1931.webp"
+            srcset="img/poslugi/IMG_1931.webp 800w, img/poslugi/.IMG_1931.webp 800w"
             sizes="(max-width: 720px) 100vw, 25vw"
             alt="Догляд"
             width="800" height="600" loading="lazy" decoding="async" />
@@ -182,42 +182,23 @@
         <a class="link" target="_blank" rel="noopener" href="https://www.instagram.com/qualityservice.hair">Більше в Instagram →</a>
       </div>
       <div class="gallery" id="gallery">
-        <!-- Приклад: обов’язково width/height для CLS -->
-        <a href="assets/portfolio/1.jpg">
-          <img src="assets/portfolio/1_thumb.jpg"
-               alt="Робота 1"
-               width="600" height="800"
-               loading="lazy" decoding="async" />
+        <a href="img/portfolio/IMG_6072.webp">
+          <img src="img/portfolio/IMG_6072.webp" alt="Робота 1" width="600" height="800" loading="lazy" decoding="async" />
         </a>
-        <a href="assets/portfolio/2.jpg">
-          <img src="assets/portfolio/2_thumb.jpg"
-               alt="Робота 2"
-               width="600" height="800"
-               loading="lazy" decoding="async" />
+        <a href="img/portfolio/IMG_1923.webp">
+          <img src="img/portfolio/IMG_1923.webp" alt="Робота 2" width="600" height="800" loading="lazy" decoding="async" />
         </a>
-        <a href="assets/portfolio/3.jpg">
-          <img src="assets/portfolio/3_thumb.jpg"
-               alt="Робота 3"
-               width="600" height="800"
-               loading="lazy" decoding="async" />
+        <a href="img/portfolio/IMG_1924.webp">
+          <img src="img/portfolio/IMG_1924.webp" alt="Робота 3" width="600" height="800" loading="lazy" decoding="async" />
         </a>
-        <a href="assets/portfolio/4.jpg">
-          <img src="assets/portfolio/4_thumb.jpg"
-               alt="Робота 4"
-               width="600" height="800"
-               loading="lazy" decoding="async" />
+        <a href="img/portfolio/IMG_1927.webp">
+          <img src="img/portfolio/IMG_1927.webp" alt="Робота 4" width="600" height="800" loading="lazy" decoding="async" />
         </a>
-        <a href="assets/portfolio/5.jpg">
-          <img src="assets/portfolio/5_thumb.jpg"
-               alt="Робота 5"
-               width="600" height="800"
-               loading="lazy" decoding="async" />
+        <a href="img/portfolio/IMG_1924.webp">
+          <img src="img/portfolio/IMG_1924.webp" alt="Робота 5" width="600" height="800" loading="lazy" decoding="async" />
         </a>
-        <a href="assets/portfolio/6.jpg">
-          <img src="assets/portfolio/6_thumb.jpg"
-               alt="Робота 6"
-               width="600" height="800"
-               loading="lazy" decoding="async" />
+        <a href="img/portfolio/IMG_6072.webp">
+          <img src="img/portfolio/IMG_6072.webp" alt="Робота 6" width="600" height="800" loading="lazy" decoding="async" />
         </a>
       </div>
       <!-- Лайтбокс создадим лениво в JS -->
@@ -284,12 +265,12 @@
 
         <div class="contact__links" aria-label="Швидкі контакти">
           <a class="chip" target="_blank" rel="noopener" href="https://www.instagram.com/qualityservice.hair">Instagram</a>
-          <a class="chip" target="_blank" rel="noopener" href="https://wa.me/380000000000?text=Хочу%20записатися%20на%20наращування">WhatsApp</a>
-          <a class="chip" href="tel:+380000000000">+38 (000) 000-00-00</a>
+          <a class="chip" target="_blank" rel="noopener" href="https://wa.me/380990419347?text=Хочу%20записатися%20на%20наращування">WhatsApp</a>
+          <a class="chip" href="tel:+380000000000">+38 (099) 041-93-47</a>
         </div>
       </div>
       <div class="mapwrap" role="img" aria-label="Карта розташування студії">
-        <iframe title="Карта студії" src="https://maps.google.com/maps?q=Kyiv&t=&z=14&ie=UTF8&iwloc=&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <iframe title="Карта студії" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2539.863651254802!2d30.51650931572248!3d50.45385047947651!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d4ce5c4c5d6d7b%3A0x6c3d1f7c0e6a8f54!2sQuality%20Service%20Hair!5e0!3m2!1sen!2sua!4v1687680000000!5m2!1sen!2sua" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
     </div>
   </section>
@@ -298,7 +279,7 @@
   <footer class="footer" role="contentinfo">
     <div class="container footer__inner">
       <div class="foot__brand">
-        <img src="assets/logo.svg" alt="" width="120" height="26" />
+        <img src="img/logo.png" alt="" width="120" height="26" />
         <span>© 2025 Quality Service Hair</span>
       </div>
       <div class="foot__links">
