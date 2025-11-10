@@ -338,7 +338,21 @@
         <p>Залиште номер — ми передзвонимо протягом 15 хвилин.</p>
         <form id="contactForm" class="form" action="#" method="post" novalidate>
           <label>Ім’я <input type="text" name="name" required placeholder="Ваше ім’я" inputmode="text" autocomplete="name" /></label>
-          <label>Телефон <input type="tel" name="phone" required placeholder="+380..." inputmode="tel" autocomplete="tel" /></label>
+          <label>
+            Телефон
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              required
+              placeholder="+380XXXXXXXXX"
+              pattern="^\+380\d{9}$"
+              maxlength="13"
+              inputmode="numeric"
+              autocomplete="tel"
+              oninput="this.value = this.value.replace(/[^0-9+]/g, '').replace(/(?!^\+380)\D/g, '');"
+            />
+          </label>
           <label>Коментар <textarea name="message" rows="4" placeholder="Бажана дата/послуга"></textarea></label>
           <button type="submit" class="btn btn--primary">Надіслати</button>
           <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>

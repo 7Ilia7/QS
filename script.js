@@ -218,29 +218,79 @@ function initLightbox() {
 }
 document.getElementById('gallery')?.addEventListener('click', initLightbox, { once: true });
 
-// Контакт-форма (Formspree-ready). Замени URL на свой endpoint
+// Контакт-форма: інтеграція з Telegram Bot API
 const form = document.getElementById('contactForm');
 const statusEl = document.getElementById('formStatus');
+
+/**
+ * Показує pop-up повідомлення у правому нижньому куті
+ * @param {string} message
+ * @param {boolean} success
+ */
+function showPopup(message, success = true) {
+  let popup = document.createElement('div');
+  popup.textContent = message;
+  popup.style.position = 'fixed';
+  popup.style.right = '24px';
+  popup.style.bottom = '24px';
+  popup.style.zIndex = '9999';
+  popup.style.background = success ? '#2ecc40' : '#ff4136';
+  popup.style.color = '#fff';
+  popup.style.padding = '16px 24px';
+  popup.style.borderRadius = '8px';
+  popup.style.boxShadow = '0 2px 12px rgba(0,0,0,0.15)';
+  popup.style.fontSize = '1rem';
+  popup.style.opacity = '0';
+  popup.style.transition = 'opacity 0.2s';
+  document.body.appendChild(popup);
+  // trigger opacity transition
+  requestAnimationFrame(() => { popup.style.opacity = '1'; });
+  setTimeout(() => {
+    popup.style.opacity = '0';
+    setTimeout(() => popup.remove(), 350);
+  }, 4000);
+}
+
 form?.addEventListener('submit', async (e) => {
   e.preventDefault();
   if (statusEl) statusEl.textContent = 'Надсилаємо...';
+  // === Вставте ваш токен і chat_id нижче ===
+  const TELEGRAM_TOKEN = '7982658921:AAEJEHS_LKn2-uquieIX8pqOtB8JbHxv2oc'; // <-- ВСТАВИТИ СВІЙ ТОКЕН
+  const CHAT_ID = '-4907639564';      // <-- ВСТАВИТИ СВІЙ chat_id
+  // =========================================
+  const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+  // Збираємо дані форми
+  const formData = new FormData(form);
+  let message = '📩 <b>Нове повідомлення з сайту:</b>\n';
+  for (const [key, value] of formData.entries()) {
+    message += `<b>${key}:</b> ${value}\n`;
+  }
   try {
-    // Пример Formspree:
-    // const res = await fetch('https://formspree.io/f/XXXXX', { method:'POST', body: new FormData(form) });
-
-    // Заглушка (ваш бекенд):
-    const res = await fetch('/', { method: 'POST', body: new FormData(form) });
-
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: message,
+        parse_mode: 'HTML'
+      })
+    });
     if (res.ok) {
-      if (statusEl) statusEl.textContent = 'Дякуємо! Ми зв’яжемося з вами.';
+      if (statusEl) statusEl.textContent = '';
       form.reset();
+      showPopup('✅ Дякуємо! Ми звʼяжемося з вами протягом 10 хвилин.', true);
     } else {
-      if (statusEl) statusEl.textContent = 'Сталася помилка. Спробуйте ще раз.';
+      if (statusEl) statusEl.textContent = '';
+      showPopup('❌ Не вдалося надіслати. Спробуйте пізніше.', false);
     }
   } catch {
-    if (statusEl) statusEl.textContent = 'Сталася помилка мережі.';
+    if (statusEl) statusEl.textContent = '';
+    showPopup('❌ Не вдалося надіслати. Спробуйте пізніше.', false);
   }
 });
+
 // Анімація появи карти при скролі
 const mapSection = document.querySelector('.mapwrap');
 if (mapSection) {
@@ -253,4 +303,42 @@ if (mapSection) {
     });
   }, { threshold: 0.3 });
   mapObserver.observe(mapSection);
+}
+
+// === Phone Mask + Validation ===
+const phoneInput = document.getElementById('phone');
+
+if (phoneInput) {
+  // Встановлюємо початкове значення
+  phoneInput.value = '+380';
+
+  // Коли користувач вводить — дозволяємо лише цифри після +380
+  phoneInput.addEventListener('input', (e) => {
+    let value = e.target.value;
+
+    // Примусово зберігаємо префікс +380
+    if (!value.startsWith('+380')) {
+      value = '+380' + value.replace(/[^0-9]/g, '');
+    }
+
+    // Видаляємо зайвий нуль одразу після +380
+    value = value.replace(/^\+3800/, '+380');
+
+    // Залишаємо лише цифри після +380, максимум 9
+    const numericPart = value.slice(4).replace(/\D/g, '').slice(0, 9);
+    e.target.value = '+380' + numericPart;
+  });
+
+  // Перевірка валідності при втраті фокусу
+  phoneInput.addEventListener('blur', () => {
+    const phone = phoneInput.value.trim();
+    const regex = /^\+380\d{9}$/;
+
+    if (!regex.test(phone)) {
+      phoneInput.setCustomValidity('Введіть номер у форматі +380XXXXXXXXX');
+      phoneInput.reportValidity();
+    } else {
+      phoneInput.setCustomValidity('');
+    }
+  });
 }
