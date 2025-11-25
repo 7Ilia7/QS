@@ -69,6 +69,7 @@
         <a class="nav__link" href="#portfolio">Портфоліо</a>
         <a class="nav__link" href="#reviews">Відгуки</a>
         <a class="nav__link" href="#pricing">Ціни</a>
+        <a class="nav__link" href="#calculator">Калькулятор</a>
         <a class="nav__link" href="#contact">Контакти</a>
       </nav>
       <div class="header__controls">
@@ -255,6 +256,92 @@
     </div>
   </section>
 
+  <!-- Calculator -->
+  <section class="section section--calculator reveal" id="calculator" aria-label="Калькулятор наращування">
+    <div class="container calc">
+      <div class="calc__intro">
+        <span class="calc__eyebrow">Онлайн-розрахунок</span>
+        <h2 class="title">Калькулятор наращування</h2>
+        <p>Оберіть довжину та густоту, а також додаткові опції — ми підрахуємо приблизну вартість і час процедури. Розрахунок допоможе зорієнтуватися, а фінальну ціну майстер уточнить на консультації.</p>
+        <ul class="calc__list">
+          <li>Тільки натуральне волосся та мікрокапсульна технологія</li>
+          <li>Калькуляція враховує витрати на пасма і роботу майстра</li>
+          <li>Підлаштовується під ваші параметри в реальному часі</li>
+        </ul>
+        <div class="calc__presets" role="group" aria-label="Швидкі сценарії">
+          <button type="button" class="calc__preset" data-length="40" data-strands="110">Натурально</button>
+          <button type="button" class="calc__preset is-active" data-length="45" data-strands="140">Більше об’єму</button>
+          <button type="button" class="calc__preset" data-length="55" data-strands="170">Максимум</button>
+        </div>
+      </div>
+      <form class="calc__panel" id="calcForm" novalidate>
+        <div class="calc__field">
+          <div class="calc__label">
+            <span>Довжина пасм</span>
+            <strong id="calc-length-value">45 см</strong>
+          </div>
+          <input type="range" id="calc-length" name="length" min="35" max="65" step="5" value="45" />
+          <div class="calc__range-scale" aria-hidden="true">
+            <span>35</span><span>45</span><span>55</span><span>65</span>
+          </div>
+        </div>
+
+        <div class="calc__field">
+          <div class="calc__label">
+            <span>Кількість пасм</span>
+            <strong id="calc-strands-value">140 шт</strong>
+          </div>
+          <input type="range" id="calc-strands" name="strands" min="80" max="200" step="10" value="140" />
+          <div class="calc__range-scale" aria-hidden="true">
+            <span>80</span><span>120</span><span>160</span><span>200</span>
+          </div>
+        </div>
+
+        <div class="calc__field">
+          <span class="calc__label">Додати опції</span>
+          <div class="calc__options">
+            <label class="calc__checkbox">
+              <input type="checkbox" name="extra" value="color" data-price="900" />
+              <span>Тонування/підфарбування пасм</span>
+              <small>+900 ₴</small>
+            </label>
+            <label class="calc__checkbox">
+              <input type="checkbox" name="extra" value="polish" data-price="600" />
+              <span>Полірування + філірування</span>
+              <small>+600 ₴</small>
+            </label>
+            <label class="calc__checkbox">
+              <input type="checkbox" name="extra" value="care" data-price="450" />
+              <span>Доглядовий комплекс після процедури</span>
+              <small>+450 ₴</small>
+            </label>
+          </div>
+        </div>
+
+        <div class="calc__result" aria-live="polite">
+          <div class="calc__result-main">
+            <p class="calc__meta">Орієнтовна вартість</p>
+            <div class="calc__price" id="calc-price">8 400 ₴</div>
+          </div>
+          <div class="calc__badges">
+            <div class="calc__badge">
+              <span class="calc__meta">Пасм</span>
+              <strong id="calc-strands-label">140</strong>
+            </div>
+            <div class="calc__badge">
+              <span class="calc__meta">Час</span>
+              <strong id="calc-time">~2.1 год</strong>
+            </div>
+          </div>
+          <p class="calc__note" id="calc-note">Фінальна ціна залежить від відтінку та стану волосся. Запис — безкоштовна консультація.</p>
+          <div class="actions">
+            <a class="btn btn--primary" href="#contact">Записатись на консультацію</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
   <!-- Portfolio -->
   <section class="section section--alt reveal" id="portfolio" aria-label="Портфоліо">
     <div class="container">
@@ -316,7 +403,6 @@
       </div>
     </div>
   </section>
-
   <!-- Why Us -->
   <section class="section reveal" id="whyus" aria-label="Чому ми">
     <div class="container">

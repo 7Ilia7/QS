@@ -218,6 +218,92 @@ function initLightbox() {
 }
 document.getElementById('gallery')?.addEventListener('click', initLightbox, { once: true });
 
+// Калькулятор наращування: вартість + час
+const calcFormEl = document.getElementById('calcForm');
+const calcLength = document.getElementById('calc-length');
+const calcStrands = document.getElementById('calc-strands');
+const calcLengthValue = document.getElementById('calc-length-value');
+const calcStrandsValue = document.getElementById('calc-strands-value');
+const calcStrandsLabel = document.getElementById('calc-strands-label');
+const calcPrice = document.getElementById('calc-price');
+const calcTime = document.getElementById('calc-time');
+const calcNote = document.getElementById('calc-note');
+const calcPresets = document.querySelectorAll('.calc__preset');
+
+if (calcFormEl && calcLength && calcStrands && calcPrice) {
+  // Розцінка за 1 пасмо в залежності від довжини (грн)
+  const lengthRates = [
+    { len: 35, rate: 48 },
+    { len: 40, rate: 55 },
+    { len: 45, rate: 62 },
+    { len: 50, rate: 70 },
+    { len: 55, rate: 78 },
+    { len: 60, rate: 86 },
+    { len: 65, rate: 92 }
+  ];
+
+  const nf = new Intl.NumberFormat('uk-UA');
+
+  function interpolateRate(lengthCm) {
+    for (let i = 0; i < lengthRates.length - 1; i++) {
+      const current = lengthRates[i];
+      const next = lengthRates[i + 1];
+      if (lengthCm === current.len) return current.rate;
+      if (lengthCm > current.len && lengthCm < next.len) {
+        const progress = (lengthCm - current.len) / (next.len - current.len);
+        return current.rate + (next.rate - current.rate) * progress;
+      }
+    }
+    return lengthRates[lengthRates.length - 1].rate;
+  }
+
+  function estimateTime(lengthCm, strandsCount) {
+    const base = 1.4;
+    const byLength = ((lengthCm - 35) / 30) * 0.35;
+    const byVolume = ((strandsCount - 80) / 120) * 1.05;
+    return Math.max(1.3, base + byLength + byVolume);
+  }
+
+  function updateCalc() {
+    const lengthCm = Number(calcLength.value);
+    const strandsCount = Number(calcStrands.value);
+    const extras = Array.from(calcFormEl.querySelectorAll('input[name="extra"]:checked'));
+
+    const rate = interpolateRate(lengthCm);
+    const extrasCost = extras.reduce((sum, el) => sum + Number(el.dataset.price || 0), 0);
+    const total = Math.round(rate * strandsCount + extrasCost);
+    const time = estimateTime(lengthCm, strandsCount);
+
+    calcLengthValue.textContent = `${lengthCm} см`;
+    calcStrandsValue.textContent = `${strandsCount} шт`;
+    calcStrandsLabel.textContent = strandsCount;
+    calcPrice.textContent = `${nf.format(total)} ₴`;
+    calcTime.textContent = `~${time.toFixed(1)} год`;
+
+    if (calcNote) {
+      const extrasText = extras.length
+        ? `Враховані опції: ${extras.map(el => el.closest('label')?.querySelector('span')?.textContent || '').filter(Boolean).join(', ')}.`
+        : 'Без додаткових опцій — можна додати на консультації.';
+      calcNote.textContent = `${extrasText} Фінальна сума залежить від відтінку та стану волосся.`;
+    }
+  }
+
+  calcFormEl.addEventListener('input', updateCalc);
+  calcPresets.forEach(btn => {
+    btn.addEventListener('click', () => {
+      calcPresets.forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      const presetLength = btn.dataset.length;
+      const presetStrands = btn.dataset.strands;
+      if (presetLength) calcLength.value = presetLength;
+      if (presetStrands) calcStrands.value = presetStrands;
+      updateCalc();
+    });
+  });
+
+  updateCalc();
+}
+
 // Контакт-форма: інтеграція з Telegram Bot API
 const form = document.getElementById('contactForm');
 const statusEl = document.getElementById('formStatus');
