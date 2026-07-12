@@ -69,14 +69,48 @@ document.addEventListener('keydown', (event) => {
 const header = document.querySelector('.header');
 const toTop = document.getElementById('toTop');
 const onScroll = () => {
-  const y = window.scrollY || document.documentElement.scrollTop;
+  const scrollRoot = document.scrollingElement || document.documentElement;
+  const y = window.scrollY || scrollRoot.scrollTop || document.body.scrollTop || 0;
   if (header) header.classList.toggle('scrolled', y > 10);
   if (toTop) {
     if (y > 400) { toTop.hidden = false; } else { toTop.hidden = true; }
   }
 };
-window.addEventListener('scroll', onScroll, { passive: true });
-toTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+function scrollToPageTop() {
+  const scrollRoot = document.scrollingElement || document.documentElement;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  scrollRoot?.scrollTo?.({ top: 0, behavior: 'smooth' });
+  document.body?.scrollTo?.({ top: 0, behavior: 'smooth' });
+  setTimeout(() => {
+    const y = window.scrollY || scrollRoot.scrollTop || document.body.scrollTop || 0;
+    if (y > 8) {
+      window.scrollTo(0, 0);
+      scrollRoot.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }
+    onScroll();
+  }, 450);
+}
+
+window.addEventListener('scroll', () => requestAnimationFrame(onScroll), { passive: true });
+onScroll();
+toTop?.addEventListener('click', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  scrollToPageTop();
+});
+toTop?.addEventListener('touchend', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  scrollToPageTop();
+}, { passive: false });
+
+document.addEventListener('click', (event) => {
+  if (event.target.closest?.('#toTop')) {
+    event.preventDefault();
+    scrollToPageTop();
+  }
+});
 
 // Smooth scroll для якорей (закрываем меню на мобиле)
 document.querySelectorAll('a[href^="#"]').forEach(a => {
