@@ -17,7 +17,7 @@
   <meta property="og:image" content="img/og-cover.jpg" />
 
   <!-- Favicon -->
-  <link rel="icon" href="img/qsh-logo.svg" />
+  <link rel="icon" href="img/qsh-logo-round.png" />
 
   <!-- Fonts: preconnect + preload -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +26,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 
   <!-- Preload hero image for LCP -->
-  <link rel="preload" as="image" href="img/hero-dark.jpg" imagesrcset="img/hero-dark.jpg 1280w, img/hero-dark@2x.jpg 1920w" imagesizes="100vw">
+  <link rel="preload" as="image" href="img/backmain.webp" imagesizes="100vw">
 
   <!-- Critical CSS (маленький блок, остальное — в styles.css) -->
   <style>
@@ -61,7 +61,7 @@
   <header class="header" role="banner" aria-label="Головна навігація">
     <div class="container header__inner">
       <a href="#hero" class="logo" aria-label="Перейти до початку">
-        <img src="img/qsh-logo.svg" alt="Quality Service Hair" width="120" height="32" />
+        <img src="img/qsh-logo-round.png" alt="Quality Service Hair" width="48" height="48" />
       </a>
       <nav class="nav" id="nav" role="navigation" aria-label="Основне меню" aria-hidden="false">
         <a class="nav__link" href="#about">Про студію</a>
@@ -83,10 +83,11 @@
   <div id="mobile-overlay" class="mobile-overlay" hidden></div>
 
   <!-- Hero -->
-  <section class="hero reveal" id="hero" role="region" aria-label="Нарощування волосся">
+  <section class="hero reveal" id="hero" role="region" aria-label="Нарощування волосся" style="--hero-bg:url('img/backmain.webp')">
     <div class="hero__backdrop" aria-hidden="true"></div>
     <div class="container hero__inner">
       <div class="hero__copy">
+        <span class="hero__eyebrow">Quality Service Hair Studio</span>
         <h1>
           Преміальне <span class="hero__highlight">наращування</span>
           <span class="hero__duration">за <strong>2</strong> години</span>
@@ -103,12 +104,21 @@
         </ul>
       </div>
       <div class="hero__visual">
-        <figure class="hero__frame">
-          <img src="img/backmain.webp"
-               alt="Клієнтка студії з доглянутим довгим волоссям"
-               width="580" height="780" loading="eager" decoding="async" />
-          <figcaption class="hero__note">Натуральний результат без фотошопу</figcaption>
-        </figure>
+        <div class="hero__showcase" aria-label="Переваги процедури">
+          <div class="hero__metric hero__metric--main">
+            <span>Середній час</span>
+            <strong>2 год</strong>
+          </div>
+          <div class="hero__metric">
+            <span>Матеріали</span>
+            <strong>100% natural</strong>
+          </div>
+          <div class="hero__metric">
+            <span>Фініш</span>
+            <strong>Без помітного переходу</strong>
+          </div>
+          <p>Індивідуальний підбір відтінку, довжини та густоти під вашу структуру волосся.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -362,12 +372,6 @@
         <a href="img/portfolio/IMG_1927.webp">
           <img src="img/portfolio/IMG_1927.webp" alt="Робота 4" width="600" height="800" loading="lazy" decoding="async" />
         </a>
-        <a href="img/portfolio/IMG_1924.webp">
-          <img src="img/portfolio/IMG_1924.webp" alt="Робота 5" width="600" height="800" loading="lazy" decoding="async" />
-        </a>
-        <a href="img/portfolio/IMG_6072.webp">
-          <img src="img/portfolio/IMG_6072.webp" alt="Робота 6" width="600" height="800" loading="lazy" decoding="async" />
-        </a>
       </div>
       <!-- Лайтбокс создадим лениво в JS -->
       <div id="lightbox" class="lightbox" aria-hidden="true" hidden>
@@ -460,7 +464,7 @@
   <footer class="footer" role="contentinfo">
     <div class="container footer__inner">
       <div class="foot__brand">
-        <img src="img/qsh-logo.svg" alt="" width="120" height="26" />
+        <img src="img/qsh-logo-round.png" alt="" width="36" height="36" />
         <span>© 2025 Quality Service Hair</span>
       </div>
       <div class="foot__links">
@@ -471,7 +475,7 @@
   </footer>
 
   <!-- Scroll-to-top -->
-  <button id="toTop" class="to-top" aria-label="Прокрутити догори" hidden>↑</button>
+  <button id="toTop" class="to-top" type="button" aria-label="Прокрутити догори" hidden>↑</button>
 
   <!-- Скрипти: defer для FCP/FID -->
   <script src="script.js" defer></script>
