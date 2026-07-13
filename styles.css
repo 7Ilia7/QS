@@ -637,16 +637,31 @@ img{max-width:100%; display:block; height:auto}
   border:1px solid rgba(241,212,109,0.18);
   border-radius:12px;
   background:rgba(7,7,6,0.46);
+  background-size:cover;
+  background-position:center;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
+  overflow:hidden;
 }
 .hero__metric--main{
   grid-row:span 2;
   min-height:456px;
+}
+.hero__metric--time{
   background:
-    linear-gradient(180deg, rgba(241,212,109,0.18), rgba(7,7,6,0.38)),
-    rgba(7,7,6,0.5);
+    linear-gradient(180deg, rgba(7,7,6,0.18) 0%, rgba(7,7,6,0.38) 42%, rgba(7,7,6,0.86) 100%),
+    url("img/hero-cards/time.webp") center / cover no-repeat;
+}
+.hero__metric--materials{
+  background:
+    linear-gradient(180deg, rgba(7,7,6,0.18) 0%, rgba(7,7,6,0.42) 48%, rgba(7,7,6,0.88) 100%),
+    url("img/hero-cards/materials.webp") center 32% / cover no-repeat;
+}
+.hero__metric--finish{
+  background:
+    linear-gradient(180deg, rgba(7,7,6,0.16) 0%, rgba(7,7,6,0.34) 46%, rgba(7,7,6,0.82) 100%),
+    url("img/hero-cards/finish.webp") center 38% / cover no-repeat;
 }
 .hero__metric span{
   color:#d7c593;
@@ -668,6 +683,14 @@ img{max-width:100%; display:block; height:auto}
 .hero__metric:not(.hero__metric--main) strong{
   font-size:clamp(22px,1.9vw,29px);
   line-height:1.12;
+}
+.hero__showcase .hero__metric--time span,
+.hero__showcase .hero__metric--materials span,
+.hero__showcase .hero__metric--finish span,
+.hero__showcase .hero__metric--time strong,
+.hero__showcase .hero__metric--materials strong,
+.hero__showcase .hero__metric--finish strong{
+  color:#fff;
 }
 
 @media (max-width: 1024px){
@@ -759,7 +782,20 @@ img{max-width:100%; display:block; height:auto}
 /* Grid helpers */
 .grid{display:grid; gap:28px}
 .grid--2{grid-template-columns:1.1fr 0.9fr; align-items:center}
-.about__media img{border-radius:var(--radius)}
+.section--about .grid--2{
+  grid-template-columns:0.9fr 1.1fr;
+  gap:48px;
+}
+.about__media{
+  justify-self:stretch;
+}
+.about__media img{
+  width:100%;
+  aspect-ratio:3/4;
+  object-fit:cover;
+  object-position:center top;
+  border-radius:var(--radius);
+}
 
 /* Cards services */
 .cards{display:grid; grid-template-columns:repeat(4,1fr); gap:18px}
@@ -1148,6 +1184,10 @@ img{max-width:100%; display:block; height:auto}
   .pricegrid{grid-template-columns:repeat(2,1fr)}
   .icons{grid-template-columns:repeat(2,1fr)}
   .grid--2{grid-template-columns:1fr}
+  .section--about .grid--2{
+    grid-template-columns:1fr;
+    gap:28px;
+  }
   .calc{
     grid-template-columns:1fr;
     gap:32px;

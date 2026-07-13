@@ -139,6 +139,8 @@ document.querySelectorAll('[data-slider]').forEach(slider => {
   const dots = [];
   let activeIndex = 0;
   let rafId = 0;
+  let programmaticIndex = null;
+  let scrollEndTimer = 0;
 
   if (dotsHost) {
     if (!dotsHost.children.length) {
@@ -173,11 +175,22 @@ document.querySelectorAll('[data-slider]').forEach(slider => {
     const bounded = Math.max(0, Math.min(index, items.length - 1));
     const target = items[bounded];
     if (!target) return;
-    const left = target.offsetLeft - track.offsetLeft;
+    programmaticIndex = bounded;
+    setActive(bounded);
+    const left = target.offsetLeft - track.offsetLeft - (track.clientWidth - target.offsetWidth) / 2;
     track.scrollTo({ left, behavior });
   }
 
   function handleScroll() {
+    if (programmaticIndex !== null) {
+      setActive(programmaticIndex);
+      clearTimeout(scrollEndTimer);
+      scrollEndTimer = setTimeout(() => {
+        programmaticIndex = null;
+        handleScroll();
+      }, 180);
+      return;
+    }
     const viewportCenter = track.scrollLeft + track.clientWidth / 2;
     let bestIndex = activeIndex;
     let bestDistance = Number.POSITIVE_INFINITY;
