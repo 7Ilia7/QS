@@ -1,3 +1,21 @@
+# V3 readback resilience — LOCAL implementation, 30 October 2026
+
+Handoff `evt-owner-97534d488022fdb89d54ea6a` addresses independent live QA finding
+`PIPELINE-POSTSWITCH-DNS`. Bounded GET-only EAI_AGAIN recovery and an explicit
+verification-only operation preserve exact CI/SHA/current-state binding without
+replaying deployment. Receiver confirmation is persisted before public checks.
+The parent hard deadline kills/reaps a GET-only worker even when libc DNS blocks;
+owned blocked-resolver tests verify both per-resource and overall budgets.
+See `docs/readback.md` for budgets, limitations, phases and review requirements.
+
+This isolated candidate starts from actual main `b74ac494...`. No GitHub write,
+workflow dispatch, SSH/server effect, key/token/state read or product change was
+performed. Old activation remains Blocked/HOLD; its already-confirmed switches,
+two failed runner jobs, archived V1/V2 and current latest source are preserved.
+Meaningful local fault/CLI and affected-client evidence plus exact candidate
+freeze/READY are recorded separately in canonical
+`operations/deployment/cicd/20261030-v3`. Live runner acceptance is NOT RUN here.
+
 # Activation acceptance session — 30 October 2026
 
 Reviewed V2 was adopted through PR #4. Initial main source
