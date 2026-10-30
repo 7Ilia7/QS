@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: Manual rollback or one-time baseline bootstrap
+        description: Manual rollback, one-time bootstrap, or read-only verification
         type: choice
-        options: [rollback, bootstrap]
+        options: [rollback, bootstrap, verify]
         default: rollback
         required: true
       source_sha:
@@ -21,7 +21,7 @@ on:
         required: true
         type: string
       expected_current:
-        description: Current production SHA for manual rollback only
+        description: Current production SHA required for rollback or verify (verify must equal source_sha)
         required: false
         type: string
 permissions:
@@ -37,7 +37,7 @@ jobs:
        github.event.workflow_run.head_branch == 'main' &&
        github.event.workflow_run.head_repository.full_name == github.repository) ||
       (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' &&
-       (inputs.action == 'rollback' ||
+       (inputs.action == 'rollback' || inputs.action == 'verify' ||
         (inputs.action == 'bootstrap' && vars.QS_AUTO_CD_READY != 'true')))
     concurrency:
       group: qs-production
@@ -67,12 +67,19 @@ jobs:
           mkdir -p out
           python automation/select_ci.py --output out/selected
       - name: Promote or roll back, then verify HTTPS
-        if: steps.select.outputs.eligible == 'true'
+        if: steps.select.outputs.eligible == 'true' && inputs.action != 'verify'
         env:
           GH_TOKEN: ${{ github.token }}
           QS_DEPLOY_SSH_KEY: ${{ secrets.QS_DEPLOY_SSH_KEY }}
           QS_KNOWN_HOSTS: ${{ vars.QS_KNOWN_HOSTS }}
         run: python automation/deploy.py --artifact out/selected --report out/production-receipt
+      - name: Verify installed version without mutation
+        if: steps.select.outputs.eligible == 'true' && inputs.action == 'verify'
+        env:
+          QS_DEPLOY_SSH_KEY: ${{ secrets.QS_DEPLOY_SSH_KEY }}
+          QS_KNOWN_HOSTS: ${{ vars.QS_KNOWN_HOSTS }}
+          EXPECTED_SOURCE_SHA: ${{ inputs.expected_current }}
+        run: python automation/deploy.py --verify-only --expected-source-sha "$EXPECTED_SOURCE_SHA" --artifact out/selected --report out/production-receipt
       - name: Preserve sanitized operation evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

@@ -1,9 +1,16 @@
-# One-time QS auto-CD activation — NOT EXECUTED
+# One-time QS auto-CD activation — historical setup sequence
+
+The original setup below was executed on 30 October: real bootstrap and automatic
+publication passed; latest main b74ac494 was restored. Two manual jobs failed in
+post-switch runner DNS/HTTPS readback and remain failures. Independent live QA
+gave HOLD on normal-operation reliability. Do not repeat bootstrap or old jobs.
+V3's narrow **LOCAL** readback/reconciliation candidate is described in
+`readback.md`; actual reviewed runner verification remains a later assignment.
 
 The owner chose automatic publication after merge to main on30Oct. Routine
 releases must not wait for an environment reviewer/conversational approval.
-This LOCAL candidate still requires independent exact-file review followed by
-the separately authorized one-time remote setup below; no setup was executed.
+The original source candidate required independent exact-file review followed by
+the separately authorized one-time remote setup below. It is retained as history.
 
 Preparation observations: GitHub7Ilia7/QS public/admin7Ilia7, defaultmain at
 6a296d2bdae6a05e2b104df90e27a9ceab1272ae, unprotected, Actions enabled,
