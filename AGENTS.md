@@ -1,5 +1,19 @@
 # Agent Notes
 
+<!-- brainy-context-navigation:v1:start -->
+## Локальний контекст
+
+Навігація: `python3 "/Users/a1/Documents/Codex/Brainy Ag Agent/scripts/brainy_context.py" orient --project qs`.
+Далі `search --project qs --query <text>` повертає bounded metadata;
+`read --project qs --ref <ctx-ref>` розкриває точне локальне джерело.
+Не завантажуйте всю історію. Вибраний обов'язковий SKILL.md читати повністю.
+Чинний контракт: `/Users/a1/Documents/Codex/Brainy Ag Agent/docs/effective-runtime-contract.uk.md`.
+Lifecycle guard та domain QA/owner scope чинні; disabled custom gates не блокують.
+Resume projection потребує exact handoff/role/thread і не надає authority.
+Local hash не доводить live freshness; missing не дозволяє auto-sync чи ширший scope.
+<!-- brainy-context-navigation:v1:end -->
+
+
 ## Проект
 
 Статический лендинг салона Quality Service Hair: наращивание волос в Киеве. Основной язык интерфейса сейчас украинский, комментарии в коде смешаны RU/UA. Проект без сборщика: открывается как обычный `index.html`.
@@ -34,6 +48,16 @@ python -m http.server 8000
 - Видео в секции работ грузятся с внешнего сайта `nkstudio.com.ua`; нужно подтвердить права, стабильность ссылок и соответствие бренду Quality Service.
 
 ## Правила работы
+
+### Независимое реальное QA
+
+После каждой feature/extension разработчик предоставляет READY_FOR_QA по
+`operations/qa/ready-for-qa-template.md`; координатор передаёт точный build
+каноническому `qs-quality-reviewer` через существующий durable lifecycle.
+Полный workflow: `operations/qa/real-functional-qa.md`. Mocked/unit результаты
+не заменяют реальное UI/HTTP QA; fix требует retest и affected regression.
+Это инструкция передачи, не автоматический trigger/gate и не расширение прав.
+Текущее чужое задание не заменять; реальные submissions требуют отдельного scope.
 
 - Не менять бизнес-контент без явной причины: услуги, цены, тексты, номер телефона, Instagram, карту.
 - Перед правками проверять реальные файлы изображений, чтобы не добавлять битые пути.

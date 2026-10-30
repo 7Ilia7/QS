@@ -1,0 +1,37 @@
+test_absolute_deadline_and_late_acceptance (test_server.FormsTests.test_absolute_deadline_and_late_acceptance) ... ok
+test_capacity_fail_closed_and_maximum_review (test_server.FormsTests.test_capacity_fail_closed_and_maximum_review) ... ok
+test_concurrent_duplicates_both_types (test_server.FormsTests.test_concurrent_duplicates_both_types) ... ok
+test_crash_after_possible_accept_and_refresh (test_server.FormsTests.test_crash_after_possible_accept_and_refresh) ... ok
+test_disk_failure_before_reservation_never_sends (test_server.FormsTests.test_disk_failure_before_reservation_never_sends) ... ok
+test_invalid_both_empty_type_lengths_and_keys (test_server.FormsTests.test_invalid_both_empty_type_lengths_and_keys) ... ok
+test_loopback_http_framing_health_and_headers (test_server.FormsTests.test_loopback_http_framing_health_and_headers) ... ok
+test_normalization_and_conflicting_payload (test_server.FormsTests.test_normalization_and_conflicting_payload) ... ok
+test_positive_both_and_replay (test_server.FormsTests.test_positive_both_and_replay) ... ok
+test_private_disk_and_no_customer_logging (test_server.FormsTests.test_private_disk_and_no_customer_logging) ... ok
+test_provider_errors_and_ambiguous_both (test_server.FormsTests.test_provider_errors_and_ambiguous_both) ... ok
+test_rate_limits_and_replay_even_at_limit (test_server.FormsTests.test_rate_limits_and_replay_even_at_limit) ... ok
+test_refresh_delivered_failed_ttl_and_missing (test_server.FormsTests.test_refresh_delivered_failed_ttl_and_missing) ... ok
+test_server_error_is_ambiguous_and_failed_refresh_is_stable (test_server.FormsTests.test_server_error_is_ambiguous_and_failed_refresh_is_stable) ... ok
+test_telegram_transport_escaping_and_no_retry (test_server.FormsTests.test_telegram_transport_escaping_and_no_retry) ... ok
+test_trusted_proxy_rejects_untrusted_or_appended_ip (test_server.FormsTests.test_trusted_proxy_rejects_untrusted_or_appended_ip) ... ok
+test_header_byte_cap (test_correction.Admission.test_header_byte_cap) ... ok
+test_provider_wait_cannot_extend_admitted_socket (test_correction.Admission.test_provider_wait_cannot_extend_admitted_socket) ... ok
+test_public_bind_refused (test_correction.Admission.test_public_bind_refused) ... ok
+test_slow_body_deadline_no_send_and_concurrency_recovery (test_correction.Admission.test_slow_body_deadline_no_send_and_concurrency_recovery) ... ok
+test_slow_header_absolute_deadline_despite_drip (test_correction.Admission.test_slow_header_absolute_deadline_despite_drip) ... ok
+test_admission_expires_during_reservation_no_send (test_correction.Receipts.test_admission_expires_during_reservation_no_send) ... ok
+test_deadline_discards_late_receipt_and_no_retry (test_correction.Receipts.test_deadline_discards_late_receipt_and_no_retry) ... ok
+test_expired_admission_never_calls_provider (test_correction.Receipts.test_expired_admission_never_calls_provider) ... ok
+test_missing_ledger_startup_fails_closed (test_correction.Receipts.test_missing_ledger_startup_fails_closed) ... ok
+test_predeclared_type_mismatch_and_immutable_config (test_correction.Receipts.test_predeclared_type_mismatch_and_immutable_config) ... ok
+test_private_inspector_allowlist_and_missing_receipt (test_correction.Receipts.test_private_inspector_allowlist_and_missing_receipt) ... ok
+test_process_crash_after_possible_acceptance (test_correction.Receipts.test_process_crash_after_possible_acceptance) ... ok
+test_receipt_commit_failure_crash_recovery_both (test_correction.Receipts.test_receipt_commit_failure_crash_recovery_both) ... ok
+test_receipt_loss_corruption_and_record_loss_never_resend (test_correction.Receipts.test_receipt_loss_corruption_and_record_loss_never_resend) ... ok
+test_transport_synthetic_label (test_correction.Receipts.test_transport_synthetic_label) ... ok
+test_two_receipts_only_public_opaque_and_restart (test_correction.Receipts.test_two_receipts_only_public_opaque_and_restart) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 3.965s
+
+OK

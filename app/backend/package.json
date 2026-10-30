@@ -1,0 +1,11 @@
+{
+  "name": "qs-forms-local-handler",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Python stdlib entrypoint; no npm install/build required",
+  "scripts": {
+    "start": "python3 -B server.py --port 8787",
+    "test": "python3 -B -m unittest -v test_server test_correction"
+  },
+  "runtime": {"python": ">=3.12,<3.14", "entrypoint": "server.py"}
+}

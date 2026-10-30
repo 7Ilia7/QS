@@ -1,0 +1,71 @@
+name: Website production
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Promote tested artifact or roll back to an installed tested SHA
+        type: choice
+        options: [promote, rollback]
+        default: promote
+        required: true
+      source_sha:
+        description: Full 40-character source SHA of a successful main push CI run
+        required: true
+        type: string
+      ci_run_id:
+        description: Exact successful Website CI run ID for that SHA
+        required: true
+        type: string
+      expected_current:
+        description: Full current production SHA from the last verified receipt/status
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: qs-production
+  cancel-in-progress: false
+jobs:
+  production:
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: qs-production
+      url: https://quality-service-hair.165-245-223-138.sslip.io/
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Select exact successful main CI artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          CI_RUN_ID: ${{ inputs.ci_run_id }}
+        run: |
+          mkdir -p out
+          python automation/select_ci.py --source-sha "$SOURCE_SHA" --run-id "$CI_RUN_ID" --output out/selected
+      - name: Promote or roll back, then verify HTTPS
+        env:
+          DEPLOY_ACTION: ${{ inputs.action }}
+          EXPECTED_CURRENT: ${{ inputs.expected_current }}
+          QS_DEPLOY_SSH_KEY: ${{ secrets.QS_DEPLOY_SSH_KEY }}
+          QS_KNOWN_HOSTS: ${{ vars.QS_KNOWN_HOSTS }}
+        run: python automation/deploy.py --action "$DEPLOY_ACTION" --artifact out/selected --expected-current "$EXPECTED_CURRENT" --report out/production-receipt
+      - name: Preserve sanitized operation evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: production-receipt-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            out/selected/selection.json
+            out/production-receipt/
+          if-no-files-found: warn
+          retention-days: 30

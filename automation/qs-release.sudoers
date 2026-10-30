@@ -1,0 +1,2 @@
+# Proposed activation file, validate with visudo -cf before installation.
+qs-deploy ALL=(root) NOPASSWD: /usr/local/sbin/qs-release ""

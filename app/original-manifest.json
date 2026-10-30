@@ -1,0 +1,52 @@
+{
+  "schema": "qs-backend-artifact.v1",
+  "handoff_id": "evt-owner-d5d6fd69cf0e6eb34f89528d",
+  "digest": "041306bbd38a046e1c992fd83a65e6de6bc4c596b0059c7299051b7d5b2b75a7",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 6814,
+      "sha256": "39ec1da8d3a28ee9454f2024c430fd656bddb4a887bd1fea55d7d57ad924f906"
+    },
+    {
+      "path": "api-agreement.md",
+      "bytes": 2781,
+      "sha256": "8dc333f9539f1866e3ed5f84c92efafe90031d58a30778f5cd84fc7cb5ead815"
+    },
+    {
+      "path": "backend/package.json",
+      "bytes": 345,
+      "sha256": "73dfd93f09d3ed0063d1fd277c6dedebc3db0a24320edbd83f66dd5b7ed24b40"
+    },
+    {
+      "path": "backend/server.py",
+      "bytes": 16068,
+      "sha256": "9105c9e3f5121730a639930f52594e469a2db6ebc3081e302077bf29f50e6b66"
+    },
+    {
+      "path": "backend/test_server.py",
+      "bytes": 14008,
+      "sha256": "f47437bc08c4771c66c82fdb97f4e4a9fdb081731f20ed45f281c934f98f44aa"
+    },
+    {
+      "path": "freeze.py",
+      "bytes": 834,
+      "sha256": "d9ab4b7e2b791f8496227bd6cbc9e0ef3c07c04d1a788504f0b6c2fa78350ca3"
+    },
+    {
+      "path": "report.md",
+      "bytes": 2625,
+      "sha256": "a935243f6b65847fdcf1bc6c7ba1a6ac329bb5366a1382afeb74bd9fdeae1b48"
+    },
+    {
+      "path": "test-history.md",
+      "bytes": 952,
+      "sha256": "eebfc37475043408f5665bea0ed73cb88c70412d0c8fa5b3f94d9982c74cedfb"
+    },
+    {
+      "path": "test-results.txt",
+      "bytes": 2037,
+      "sha256": "249fdc06443cd41bd80691e98f65149ea3dc5d50154f81af4ca2a0cff8ee094b"
+    }
+  ]
+}
