@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://quality-service-hair.165-245-223-138.sslip.io/sitemap.xml

@@ -1,0 +1,42 @@
+name: Website CI
+on:
+  pull_request:
+  push:
+    branches: ['**']
+permissions:
+  contents: read
+concurrency:
+  group: website-ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Local source and release behavior
+        run: |
+          python automation/check_source.py
+          node --check site/script.js
+          node --check site/forms.js
+          python -B -m unittest discover -s tests -v
+      - name: Existing backend suite in its expected directory
+        working-directory: app/backend
+        run: python -B -m unittest discover -s . -p 'test_*.py' -v
+      - name: Build explicit allowlist
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: python automation/build.py --source-sha "$SOURCE_SHA" --output out/artifact
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: website-${{ github.sha }}
+          path: out/artifact/
+          if-no-files-found: error
+          retention-days: 90
