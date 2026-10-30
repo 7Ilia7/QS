@@ -8,6 +8,7 @@ import tarfile
 import tempfile
 import unittest
 from unittest.mock import patch
+from types import SimpleNamespace
 import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'automation'))
@@ -260,6 +261,29 @@ class ReleaseTests(unittest.TestCase):
         data = (report / 'result.json').read_text()
         self.assertNotIn('synthetic-local-key', data)
         self.assertEqual(json.loads(data)['status'], 'SSH_invocation_started_unknown_until_receipt')
+
+    def test_driver_protocol_to_receiver_and_public_readback_success(self):
+        archive = self.artifact();report = self.root / 'success-report'
+        def ssh(command, input, **kwargs):
+            self.assertIn('qs-deploy@165.245.223.138', command)
+            header, payload = input.split(b'\n', 1)
+            incoming = self.root / 'ssh-input.tar';incoming.write_bytes(payload)
+            response = self.manager.operate(json.loads(header), incoming)
+            return SimpleNamespace(returncode=0, stdout=canonical(response))
+        class Response(io.BytesIO):
+            status = 200
+            class Headers:
+                def get_content_type(self):return 'text/html'
+            headers = Headers()
+        class Opener:
+            def open(self, url, timeout):return Response(b'next')
+        readback = lambda manifest: public_readback(manifest, opener=Opener())
+        with patch.dict(os.environ, {'QS_DEPLOY_SSH_KEY': 'synthetic-local-key', 'QS_KNOWN_HOSTS': '165.245.223.138 ssh-ed25519 synthetic-public-key'}), patch('deploy.subprocess.run', side_effect=ssh) as run, patch('deploy.public_readback', side_effect=readback):
+            result = deploy('promote', archive.parent, A, report)
+        self.assertEqual(run.call_count, 1)
+        self.assertEqual(result['status'], 'PASS_activated_and_read_back')
+        self.assertEqual(result['source_sha'], B)
+        self.assertNotIn('synthetic-local-key', (report / 'result.json').read_text())
 
 
 if __name__ == '__main__':
