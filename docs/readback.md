@@ -13,14 +13,18 @@ Permanent DNS, certificate errors, timeout/other network errors, HTTP status,
 redirect, MIME, size or hash failures do not retry and never become PASS.
 Default CA/hostname validation and the fixed HTTPS origin remain unchanged.
 
-Scheduling budgets are 90s per resource and 600s for the complete readback;
-each open uses at most 25s or the remaining budget. Deadlines are checked before
-attempts/backoff and before/after each `HTTPResponse.read1`. No result returned
-after a checked deadline is accepted. An already-running OS resolver/I/O can
-outlast a scheduling deadline; the process cannot preempt libc DNS. The existing
-15-minute job timeout remains the outer hard bound. No new resolver/DNS override
-or TLS bypass is introduced. Retry improves the demonstrated symptom, not a
-claim that its upstream root cause is solved.
+Budgets are 90s per resource and 600s for the complete readback, including
+attempts/backoff. Each production GET runs in a child of the trusted runner
+client, with the parent's subprocess timeout set to the remaining resource/global
+budget. If libc DNS or body I/O blocks, the parent kills and reaps that GET-only
+child; it cannot wait indefinitely for the resolver before checking its clock.
+The child retains the default opener/CA/hostname/no-redirect/integrity checks and
+the existing 25s socket timeout. No result returned after a deadline is accepted.
+Worker process startup/termination has ordinary OS overhead; the existing
+15-minute job bound remains unchanged. No resolver/DNS override or TLS bypass is
+introduced. Retry improves the demonstrated symptom, not a claim that its
+upstream root cause is solved. Owned tests actually block getaddrinfo, exercise
+both hard budgets and assert the worker was killed and reaped.
 
 The client writes `activated_receiver_verified_public_readback_pending` with
 the validated receiver receipt **before** starting public GETs. On readback

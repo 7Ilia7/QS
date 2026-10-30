@@ -4,15 +4,16 @@ from contextlib import contextmanager
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
 import socket
 import subprocess
+import sys
 import tempfile
 import time
 import urllib.error
 import urllib.request
-from release_lib import SHA, canonical, digest, require, verify_archive
+from release_lib import SHA, HASH, MAX_BYTES, canonical, digest, require, verify_archive
 from delivery_policy import validate_delivery, is_new_auto_run, selected_head_is_current, TERMINAL_PHASES
 
 ORIGIN = 'https://quality-service-hair.165-245-223-138.sslip.io'
@@ -47,40 +48,77 @@ def temporary_dns(error):
     return isinstance(error, socket.gaierror) and error.errno == socket.EAI_AGAIN
 
 
+def read_resource(row, origin, opener, timeout, deadline, clock):
+    with opener.open(origin + '/' + row['path'], timeout=timeout) as response:
+        require(response.status == 200, 'HTTPS_status')
+        mime = response.headers.get_content_type()
+        expected_mimes = MIME.get(Path(row['path']).suffix)
+        require(expected_mimes is not None and mime in expected_mimes, 'HTTPS_MIME')
+        hasher, size = hashlib.sha256(), 0
+        while True:
+            require(clock() < deadline, 'HTTPS_readback_budget_exhausted')
+            block = response.read1(min(1024 * 1024, row['bytes'] + 1 - size))
+            require(clock() < deadline, 'HTTPS_readback_budget_exhausted')
+            if not block:
+                break
+            size += len(block)
+            require(size <= row['bytes'], 'HTTPS_size')
+            hasher.update(block)
+        require(size == row['bytes'] and hasher.hexdigest() == row['sha256'], 'HTTPS_hash')
+    return {'path': row['path'], 'status': 200, 'bytes': size, 'sha256': hasher.hexdigest(), 'MIME': mime, 'TLS': 'default_CA_hostname_verification'}
+
+
+def resource_process(row, remaining):
+    """Parent kills/reaps this GET-only child even if libc DNS never returns."""
+    try:
+        reply = subprocess.run([sys.executable, '-B', str(Path(__file__).resolve()), '--readback-resource'], input=canonical({'row': row, 'budget': remaining}), capture_output=True, timeout=remaining)
+    except subprocess.TimeoutExpired:
+        raise ValueError('HTTPS_readback_budget_exhausted') from None
+    require(reply.returncode == 0, 'HTTPS_readback_worker_unconfirmed')
+    value = json.loads(reply.stdout)
+    if 'error' in value:
+        error = value['error']
+        if error['temporary_DNS_EAI_AGAIN']:
+            raise urllib.error.URLError(socket.gaierror(socket.EAI_AGAIN, 'Temporary failure in name resolution'))
+        raise ValueError(error['code'])
+    return value['resource']
+
+
+def resource_worker():
+    # Internal protocol: bounded nonsecret public row, no transport or mutation
+    # handler reachable from this mode. Origin and TLS policy are fixed here.
+    raw = sys.stdin.buffer.read(8193)
+    require(len(raw) <= 8192, 'resource_input_size')
+    request = json.loads(raw)
+    row, budget = request['row'], request['budget']
+    require(type(budget) in (int, float) and 0 < budget <= RESOURCE_BUDGET, 'resource_budget')
+    require(row['component'] == 'public' and type(row['bytes']) is int and 0 <= row['bytes'] <= MAX_BYTES and HASH.fullmatch(row['sha256']), 'resource_identity')
+    path = row['path']
+    require(isinstance(path, str) and 0 < len(path) <= 2048 and not PurePosixPath(path).is_absolute() and PurePosixPath(path).as_posix() == path and '..' not in PurePosixPath(path).parts and not any(c in path for c in '\\?#%\r\n'), 'resource_path')
+    try:
+        value = read_resource(row, ORIGIN, urllib.request.build_opener(NoRedirect()), min(GET_TIMEOUT, budget), time.monotonic() + budget, time.monotonic)
+        print(json.dumps({'resource': value}))
+    except Exception as error:
+        code = str(error) if isinstance(error, ValueError) else 'HTTPS_' + type(error).__name__
+        print(json.dumps({'error': {'code': code, 'temporary_DNS_EAI_AGAIN': temporary_dns(error)}}))
+
+
 def public_readback(manifest, origin=ORIGIN, opener=None, *, clock=None, sleeper=None):
     require(origin == ORIGIN or opener is not None, 'fixed_origin')
-    opener = opener or urllib.request.build_opener(NoRedirect())
     clock, sleeper = clock or time.monotonic, sleeper or time.sleep
     deadline = clock() + READBACK_BUDGET
     results = []
     for row in manifest['files']:
         if row['component'] != 'public':
             continue
-        url = origin + '/' + row['path']
         resource_deadline = min(deadline, clock() + RESOURCE_BUDGET)
         for attempt in range(len(DNS_BACKOFF) + 1):
             remaining = resource_deadline - clock()
             require(remaining > 0, 'HTTPS_readback_budget_exhausted')
             try:
-                with opener.open(url, timeout=min(GET_TIMEOUT, remaining)) as response:
-                    require(response.status == 200, 'HTTPS_status')
-                    mime = response.headers.get_content_type()
-                    expected_mimes = MIME.get(Path(row['path']).suffix)
-                    require(expected_mimes is not None and mime in expected_mimes, 'HTTPS_MIME')
-                    hasher, size = hashlib.sha256(), 0
-                    while True:
-                        require(clock() < resource_deadline, 'HTTPS_readback_budget_exhausted')
-                        # HTTPResponse.read1 performs at most one bounded underlying
-                        # read, so a slow trickle cannot hide all deadline checks.
-                        block = response.read1(min(1024 * 1024, row['bytes'] + 1 - size))
-                        require(clock() < resource_deadline, 'HTTPS_readback_budget_exhausted')
-                        if not block:
-                            break
-                        size += len(block)
-                        require(size <= row['bytes'], 'HTTPS_size')
-                        hasher.update(block)
-                    require(size == row['bytes'] and hasher.hexdigest() == row['sha256'], 'HTTPS_hash')
-                results.append({'path': row['path'], 'status': 200, 'bytes': size, 'sha256': hasher.hexdigest(), 'MIME': mime, 'TLS': 'default_CA_hostname_verification', 'GET_attempts': attempt + 1})
+                value = resource_process(row, remaining) if opener is None else read_resource(row, origin, opener, min(GET_TIMEOUT, remaining), resource_deadline, clock)
+                require(clock() < resource_deadline, 'HTTPS_readback_budget_exhausted')
+                results.append({**value, 'GET_attempts': attempt + 1})
                 break
             except OSError as error:
                 if not temporary_dns(error) or attempt == len(DNS_BACKOFF):
@@ -222,6 +260,9 @@ def deploy(action, directory, expected_current, report):
 
 
 if __name__ == '__main__':
+    if sys.argv[1:] == ['--readback-resource']:
+        resource_worker()
+        raise SystemExit(0)
     parser = argparse.ArgumentParser()
     parser.add_argument('--artifact', type=Path, required=True)
     parser.add_argument('--report', type=Path, required=True)

@@ -10,6 +10,7 @@ import ssl
 import subprocess
 import sys
 import tempfile
+import time
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -129,6 +130,34 @@ class Reads(unittest.TestCase):
         cycle = urllib.error.URLError('owned'); cycle.reason = cycle
         self.assertFalse(client.temporary_dns(cycle))
         self.assertFalse(client.temporary_dns(urllib.error.URLError('EAI_AGAIN')))
+
+    def test_real_blocked_resolver_is_killed_and_reaped_by_each_hard_budget(self):
+        # The child enters a real, non-returning getaddrinfo fixture. No DNS or
+        # socket is forwarded. Parent deadlines must stop it, not just schedule
+        # another check after the resolver eventually returns.
+        for total, resource in [(60, 0.6), (0.6, 60)]:
+            with self.subTest(total=total,resource=resource), tempfile.TemporaryDirectory() as tmp:
+                root=Path(tmp); marker=root/'blocked.json'
+                (root/'sitecustomize.py').write_text('''import socket,threading,os,json,urllib.request
+from pathlib import Path
+urllib.request.getproxies=lambda:{}
+def blocked(host,*args,**kwargs):
+ p=Path(os.environ['OWNED_BLOCKED_RESOLVER'])
+ p.write_text(json.dumps(dict(pid=os.getpid(),host=host)))
+ threading.Event().wait(60)
+ p.with_suffix('.returned').write_text('unexpected resolver completion')
+ raise AssertionError('blocked resolver returned')
+socket.getaddrinfo=blocked
+''')
+                with patch.dict(os.environ,{'PYTHONPATH':str(root),'OWNED_BLOCKED_RESOLVER':str(marker),'PYTHONDONTWRITEBYTECODE':'1'}), patch.object(client,'READBACK_BUDGET',total), patch.object(client,'RESOURCE_BUDGET',resource), patch('deploy.time.sleep') as sleep:
+                    started=time.monotonic()
+                    with self.assertRaisesRegex(ValueError,'budget_exhausted'): client.public_readback(self.manifest)
+                    self.assertLess(time.monotonic()-started,3)
+                    sleep.assert_not_called()
+                value=json.loads(marker.read_text())
+                self.assertEqual(value['host'],'quality-service-hair.165-245-223-138.sslip.io')
+                self.assertFalse(marker.with_suffix('.returned').exists())
+                with self.assertRaises(ChildProcessError): os.waitpid(value['pid'],os.WNOHANG)
 
 
 class Verify(unittest.TestCase):
@@ -273,7 +302,7 @@ print((p/'status.json').read_text())
 '''); ssh.chmod(0o755)
         (root/'sitecustomize.py').write_text('''import io,json,os,socket,time,urllib.request,urllib.error
 from pathlib import Path
-p=Path(os.environ['OWNED_CLI']); count=0
+p=Path(os.environ['OWNED_CLI'])
 class Response(io.BytesIO):
  status=200
  class Headers:
@@ -281,8 +310,7 @@ class Response(io.BytesIO):
  headers=Headers()
 class Opener:
  def open(self,url,timeout):
-  global count
-  count+=1
+  count=len((p/'get.jsonl').read_text().splitlines())+1 if (p/'get.jsonl').exists() else 1
   with (p/'get.jsonl').open('a') as f:f.write(json.dumps(dict(url=url,timeout=timeout))+'\\n')
   if os.environ['OWNED_DNS']=='always' or (os.environ['OWNED_DNS']=='once' and count==1):raise urllib.error.URLError(socket.gaierror(socket.EAI_AGAIN,'owned'))
   return Response(b'next')

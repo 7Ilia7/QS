@@ -4,6 +4,8 @@ Handoff `evt-owner-97534d488022fdb89d54ea6a` addresses independent live QA findi
 `PIPELINE-POSTSWITCH-DNS`. Bounded GET-only EAI_AGAIN recovery and an explicit
 verification-only operation preserve exact CI/SHA/current-state binding without
 replaying deployment. Receiver confirmation is persisted before public checks.
+The parent hard deadline kills/reaps a GET-only worker even when libc DNS blocks;
+owned blocked-resolver tests verify both per-resource and overall budgets.
 See `docs/readback.md` for budgets, limitations, phases and review requirements.
 
 This isolated candidate starts from actual main `b74ac494...`. No GitHub write,
