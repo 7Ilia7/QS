@@ -13,8 +13,11 @@ Run the existing backend suite from `app/backend`:
 `python3 -B -m unittest discover -s . -p 'test_*.py' -v`.
 
 CI runs on PRs/branch pushes, without production secrets, then builds an explicit
-allowlist artifact. Production is a manual selected-SHA/run-ID promotion or
-rollback, with expected-current comparison and HTTPS content readback.
+allowlist artifact. Owner-selected QS policy: successful trusted main-push CI
+automatically publishes its exact artifact, without a per-release reviewer.
+Rollback remains manual. Current-main, durable CI-run ordering, expected-current
+comparison and HTTPS content readback protect production. One-time bootstrap
+registers the already published source before auto-CD is enabled.
 
 See [activation](docs/activation.md) for the separately reviewed one-time setup
 and [release operations](docs/release-operations.md) for normal publication.

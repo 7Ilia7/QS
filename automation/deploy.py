@@ -9,6 +9,7 @@ import subprocess
 import tempfile
 import urllib.request
 from release_lib import SHA, canonical, digest, require, verify_archive
+from delivery_policy import validate_delivery, is_new_auto_run, selected_head_is_current
 
 ORIGIN = 'https://quality-service-hair.165-245-223-138.sslip.io'
 HOST = '165.245.223.138'
@@ -18,6 +19,15 @@ MIME = {'.html': {'text/html'}, '.js': {'application/javascript', 'text/javascri
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, *args, **kwargs):
         raise ValueError('unexpected_HTTPS_redirect')
+
+
+def latest_main():
+    from select_ci import api
+    return api('repos/7Ilia7/QS/git/ref/heads/main')['object']['sha']
+
+
+def is_ancestor(earlier, later):
+    return subprocess.call(['git', 'merge-base', '--is-ancestor', earlier, later], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0
 
 
 def public_readback(manifest, origin=ORIGIN, opener=None):
@@ -48,9 +58,13 @@ def public_readback(manifest, origin=ORIGIN, opener=None):
 
 def deploy(action, directory, expected_current, report):
     m = verify_archive(directory / 'website.tar')
-    require(SHA.fullmatch(expected_current), 'expected_current_SHA')
+    selection = json.loads((directory / 'selection.json').read_text())
+    require(selection['eligible'] and selection['source_sha'] == m['source_sha'], 'selection_binding')
+    delivery = validate_delivery(selection['delivery'])
+    require((action == 'rollback') == (delivery['kind'] == 'rollback'), 'delivery_action')
+    if delivery['kind'] == 'rollback':
+        require(isinstance(expected_current, str) and SHA.fullmatch(expected_current), 'expected_current_SHA')
     data = (directory / 'website.tar').read_bytes()
-    header = {'action': action, 'source_sha': m['source_sha'], 'expected_current': expected_current, 'archive_sha256': digest(data), 'bytes': len(data)}
     report.mkdir(parents=True, exist_ok=False)
     result = {'action': action, 'source_sha': m['source_sha'], 'expected_current': expected_current, 'automatic_retry': False, 'forms_POSTs': 0, 'status': 'not_started'}
     try:
@@ -64,7 +78,30 @@ def deploy(action, directory, expected_current, report):
                 path.write_text(value.rstrip() + '\n')
                 path.chmod(0o600)
             command = ['ssh', '-F', '/dev/null', '-o', 'BatchMode=yes', '-o', 'IdentitiesOnly=yes', '-o', 'StrictHostKeyChecking=yes', '-o', 'UserKnownHostsFile=' + str(hosts_path), '-o', 'ConnectTimeout=10', '-i', str(key_path), 'qs-deploy@' + HOST, 'qs-release']
-            result['status'] = 'SSH_invocation_started_unknown_until_receipt'
+            result['status'] = 'SSH_status_started_unknown_until_receipt'
+            (report / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
+            before = subprocess.run(command, input=b'{"action":"status"}\n', capture_output=True, timeout=60)
+            require(before.returncode == 0, 'SSH_status_unconfirmed_no_retry')
+            observed = json.loads(before.stdout)
+            result['preflight_status'] = observed
+            if delivery['kind'] != 'rollback':
+                require(observed['code_matches_current_manifest'], 'current_code_unconfirmed')
+            if delivery['kind'] == 'automatic':
+                maximum = (observed.get('last_operation') or {}).get('max_automatic_run')
+                if not is_new_auto_run(delivery, maximum):
+                    result['status'] = 'SKIPPED_stale_or_duplicate_CI_run'
+                    return result
+                require(is_ancestor(observed['source_sha'], m['source_sha']), 'automatic_downgrade_refused')
+            if delivery['kind'] in {'automatic', 'bootstrap'}:
+                if not selected_head_is_current(delivery['kind'], m['source_sha'], latest_main()):
+                    result['status'] = 'SKIPPED_main_advanced_before_mutation'
+                    return result
+                expected_current = observed['source_sha']
+            else:
+                require(observed['source_sha'] == expected_current, 'stale_current_SHA')
+            result['expected_current'] = expected_current
+            header = {'action': action, 'source_sha': m['source_sha'], 'expected_current': expected_current, 'archive_sha256': digest(data), 'bytes': len(data), 'delivery': delivery}
+            result['status'] = 'SSH_mutation_started_unknown_until_receipt'
             (report / 'result.json').write_text(json.dumps(result, indent=2) + '\n')
             reply = subprocess.run(command, input=canonical(header) + b'\n' + data, capture_output=True, timeout=180)
             require(reply.returncode == 0, 'SSH_stopped_or_unconfirmed_inspect_status_no_retry')
@@ -81,10 +118,10 @@ def deploy(action, directory, expected_current, report):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--action', choices=['promote', 'rollback'], required=True)
     parser.add_argument('--artifact', type=Path, required=True)
-    parser.add_argument('--expected-current', required=True)
     parser.add_argument('--report', type=Path, required=True)
     args = parser.parse_args()
-    value = deploy(args.action, args.artifact, args.expected_current, args.report)
-    print(json.dumps({'status': value['status'], 'source_sha': value['source_sha'], 'public_files': len(value['public_files']), 'forms_POSTs': 0}))
+    selection = json.loads((args.artifact / 'selection.json').read_text())
+    action = 'rollback' if selection['delivery']['kind'] == 'rollback' else 'promote'
+    value = deploy(action, args.artifact, selection.get('expected_current'), args.report)
+    print(json.dumps({'status': value['status'], 'source_sha': value['source_sha'], 'public_files': len(value.get('public_files', [])), 'forms_POSTs': 0}))

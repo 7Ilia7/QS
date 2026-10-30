@@ -1,12 +1,16 @@
 name: Website production
 on:
+  workflow_run:
+    workflows: [Website CI]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
     inputs:
       action:
-        description: Promote tested artifact or roll back to an installed tested SHA
+        description: Manual rollback or one-time baseline bootstrap
         type: choice
-        options: [promote, rollback]
-        default: promote
+        options: [rollback, bootstrap]
+        default: rollback
         required: true
       source_sha:
         description: Full 40-character source SHA of a successful main push CI run
@@ -17,18 +21,28 @@ on:
         required: true
         type: string
       expected_current:
-        description: Full current production SHA from the last verified receipt/status
-        required: true
+        description: Current production SHA for manual rollback only
+        required: false
         type: string
 permissions:
   contents: read
   actions: read
-concurrency:
-  group: qs-production
-  cancel-in-progress: false
 jobs:
   production:
-    if: github.ref == 'refs/heads/main'
+    if: >-
+      (github.event_name == 'workflow_run' && github.ref == 'refs/heads/main' &&
+       vars.QS_AUTO_CD_READY == 'true' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.head_repository.full_name == github.repository) ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' &&
+       (inputs.action == 'rollback' ||
+        (inputs.action == 'bootstrap' && vars.QS_AUTO_CD_READY != 'true')))
+    concurrency:
+      group: qs-production
+      cancel-in-progress: false
+      queue: max
     environment:
       name: qs-production
       url: https://quality-service-hair.165-245-223-138.sslip.io/
@@ -45,20 +59,20 @@ jobs:
         with:
           python-version: '3.12'
       - name: Select exact successful main CI artifact
+        id: select
         env:
           GH_TOKEN: ${{ github.token }}
-          SOURCE_SHA: ${{ inputs.source_sha }}
-          CI_RUN_ID: ${{ inputs.ci_run_id }}
+          QS_AUTO_CD_READY: ${{ vars.QS_AUTO_CD_READY }}
         run: |
           mkdir -p out
-          python automation/select_ci.py --source-sha "$SOURCE_SHA" --run-id "$CI_RUN_ID" --output out/selected
+          python automation/select_ci.py --output out/selected
       - name: Promote or roll back, then verify HTTPS
+        if: steps.select.outputs.eligible == 'true'
         env:
-          DEPLOY_ACTION: ${{ inputs.action }}
-          EXPECTED_CURRENT: ${{ inputs.expected_current }}
+          GH_TOKEN: ${{ github.token }}
           QS_DEPLOY_SSH_KEY: ${{ secrets.QS_DEPLOY_SSH_KEY }}
           QS_KNOWN_HOSTS: ${{ vars.QS_KNOWN_HOSTS }}
-        run: python automation/deploy.py --action "$DEPLOY_ACTION" --artifact out/selected --expected-current "$EXPECTED_CURRENT" --report out/production-receipt
+        run: python automation/deploy.py --artifact out/selected --report out/production-receipt
       - name: Preserve sanitized operation evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

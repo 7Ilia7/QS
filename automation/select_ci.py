@@ -7,6 +7,7 @@ import re
 import subprocess
 import zipfile
 from release_lib import SHA, MAX_BYTES, digest, require, validate_manifest, verify_archive
+from delivery_policy import delivery_context, selected_head_is_current, validate_delivery
 
 
 def api(path):
@@ -53,25 +54,38 @@ def unpack(zip_path, output, artifact, sha):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--source-sha', required=True)
-    parser.add_argument('--run-id', required=True)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
-    require(re.fullmatch(r'[1-9][0-9]{0,18}', args.run_id), 'run_id')
-    require(SHA.fullmatch(args.source_sha), 'selected_SHA')
     repository = os.environ['GITHUB_REPOSITORY']
-    require(repository.lower() == '7ilia7/qs', 'repository')
-    require(os.environ['GITHUB_REF'] == 'refs/heads/main', 'dispatch_from_main_only')
-    subprocess.run(['git', 'merge-base', '--is-ancestor', args.source_sha, 'origin/main'], check=True)
-    run = api('repos/' + repository + '/actions/runs/' + args.run_id)
-    artifacts = api('repos/' + repository + '/actions/runs/' + args.run_id + '/artifacts?per_page=100')
+    context = delivery_context(os.environ['GITHUB_EVENT_NAME'], json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text()), repository, os.environ['GITHUB_REF'], os.environ.get('QS_AUTO_CD_READY') == 'true')
+    def skipped(reason):
+        args.output.mkdir(exist_ok=False)
+        (args.output / 'selection.json').write_text(json.dumps({'eligible': False, 'reason': reason}) + '\n')
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
+            stream.write('eligible=false\n')
+        print(json.dumps({'eligible': False, 'reason': reason}))
+    if context is None:
+        skipped('event_not_eligible_or_bootstrap_not_enabled')
+        raise SystemExit(0)
+    sha, run_id = context['source_sha'], str(context['run_id'])
+    run = api('repos/' + repository + '/actions/runs/' + run_id)
+    artifacts = api('repos/' + repository + '/actions/runs/' + run_id + '/artifacts?per_page=100')
     require(artifacts['total_count'] <= 100, 'unexpected_artifact_count')
-    chosen = select_metadata(run, artifacts['artifacts'], repository, args.source_sha)
+    chosen = select_metadata(run, artifacts['artifacts'], repository, sha)
+    require(run['id'] == context['run_id'], 'event_run_binding')
+    delivery = validate_delivery({'kind': context['kind'], 'workflow_id': run['workflow_id'], 'run_number': run['run_number'], 'run_id': run['id']})
+    latest = api('repos/' + repository + '/git/ref/heads/main')['object']['sha']
+    if not selected_head_is_current(delivery['kind'], sha, latest):
+        skipped('stale_main_SHA')
+        raise SystemExit(0)
+    subprocess.run(['git', 'merge-base', '--is-ancestor', sha, 'origin/main'], check=True)
     zip_path = args.output.with_suffix('.zip')
     with zip_path.open('xb') as dest:
         subprocess.run(['gh', 'api', '--method', 'GET', 'repos/' + repository + '/actions/artifacts/' + str(chosen['id']) + '/zip'], stdout=dest, check=True)
-    unpack(zip_path, args.output, chosen, args.source_sha)
-    receipt = {'run_id': run['id'], 'run_attempt': run['run_attempt'], 'source_sha': args.source_sha, 'artifact_id': chosen['id'], 'GitHub_ZIP_digest': chosen['digest'], 'trusted_event': 'push', 'branch': 'main', 'workflow': run['path']}
+    unpack(zip_path, args.output, chosen, sha)
+    receipt = {'eligible': True, 'run_id': run['id'], 'run_attempt': run['run_attempt'], 'source_sha': sha, 'artifact_id': chosen['id'], 'GitHub_ZIP_digest': chosen['digest'], 'trusted_event': 'push', 'branch': 'main', 'workflow': run['path'], 'delivery': delivery, 'expected_current': context['expected_current'], 'latest_main_at_selection': latest}
     (args.output / 'selection.json').write_text(json.dumps(receipt, indent=2) + '\n')
     zip_path.unlink()
+    with open(os.environ['GITHUB_OUTPUT'], 'a') as stream:
+        stream.write('eligible=true\n')
     print(json.dumps(receipt))

@@ -1,50 +1,58 @@
-# Normal website publication
+# QS publication — automatic after main merge
 
-Edit `site/` and, when needed, the private `app/` source in a reviewed branch.
-Update `release/allowlist.json` when adding/removing files. Production config,
-credentials and runtime data are outside those trees. Run the local checks,
-commit and PR; automatic CI tests and builds the explicit artifact. Review the
-actual GitHub result, then merge. PR/fork artifacts cannot be selected for CD.
+The owner's30Oct policy is automatic publication after merge to main. Edit
+site/app in a branch, update the allowlist when needed, run checks/PR review/QA
+and merge. Successful trusted main-push Website CI automatically publishes its
+exact artifact/run/SHA. No second build, routine promotion button or environment
+reviewer is required. PR/fork/failure/cancelled/non-main events cannot publish.
+Generic skill defaults for other projects are unchanged.
 
-In GitHub Actions choose **Website production → Run workflow** on main:
+Builder source roots must be actual checkout directories; declared source bytes
+must match HEAD blobs. Root/nested symlinks, untracked declared source and hidden
+non-HEAD bytes are rejected before artifact construction. Trusted CI artifact
+ZIP/internal tar/manifest hashes bind the version. Deployment runner code comes
+from trusted default main, never from the downloaded artifact.
 
-- action `promote`;
-- `source_sha`: the full successful main-push CI SHA;
-- `ci_run_id`: that exact successful Website CI run ID;
-- `expected_current`: the full production SHA from its last verified receipt
-  or the restricted status endpoint.
+One-time setup in activation.md keeps readiness false before adoption, installs
+the limited transport/config/secrets/pin, bootstraps the byte-identical baseline
+without a code switch, verifies HTTPS, then enables automatic CD once. It remains
+enabled for ordinary releases. Existing protected-main checks/product QA apply.
 
-The protected environment holds the production secret. The job verifies trusted
-run identity, main ancestry, artifact ID and ZIP digest, then the internal tar
-allowlist/hashes. The receiver compares current SHA before writing, stages new
-immutable code, makes backend ready before switching the public pointer and
-checks shared metadata. The client checks every public file by TLS/status/
-bytes/hash/MIME. It saves a sanitized `production-receipt-<run>-<attempt>`.
-Success is activated/read-back code, not automatic real form or external-provider
-acceptance for arbitrary feature changes; route affected product QA separately.
+The production queue does not kill an active switch or discard an older pending
+event merely because a later event arrived. It does not assume commit ordering.
+Selection and pre-mutation checks require current main SHA; client also prevents
+automatic ancestry downgrade. Receiver CAS and atomic durable CI-run reservation
+exclude stale/duplicate/out-of-order writes. This journal is separate from forms
+data. Manual rollback preserves its maximum run number.
 
-Rollback uses the same manual button with action `rollback`, the selected
-previously locally activated SHA/its successful CI run and the current SHA.
-The baseline source alias is also eligible. Both public/private target files
-must still match that artifact; no in-place overwrite or old state restore.
-CI artifacts are requested for90-day retention, subject to repository policy;
-an expired artifact cannot be silently substituted/rebuilt. Revalidate an older
-version in an explicitly selected recovery task if its trusted artifact is gone.
-Installed code/receipts are not automatically pruned.
+Backend readiness precedes UI activation. Only a changed private package restarts
+qs-forms.service. HTTPS readback verifies every public file's TLS/status/bytes/
+hash/MIME. Sanitized production-receipt includes selection, status, activation and
+readback. This does not replace affected product UI/provider acceptance.
 
-On failure/lost SSH result, stop and inspect the existing status/operation
-journal. Do not rerun the workflow or reset state automatically. The journal
-records staging, backend switch, UI switch and local verification phases. A
-failed backend readiness check leaves the public pointer unchanged; an explicit
-rollback can restore the prior code while preserving the newest state. If public
-HTTPS readback fails after switching, production may already be changed: use
-the recorded current SHA and choose a deliberate rollback, not a blind retry.
+## Manual rollback
 
-Restricted status request (using only the dedicated deployment key and verified
-known_hosts, never the old root key): send `{"action":"status"}\n` to
-`ssh qs-deploy@165.245.223.138 qs-release`. The forced endpoint ignores caller
-command text and accepts only its bounded JSON/tar protocol; no SCP/SFTP shell.
+Website production → Run workflow on main: action `rollback`, previous installed
+full source SHA, its successful main CI run ID and explicit current production
+SHA. Target files must match that trusted artifact; the baseline alias is eligible.
+Current forms state/HMAC/receipts are preserved. Old CI reruns cannot undo the
+rollback; a newer merged commit/newer successful main CI publishes normally.
 
-No normal release requires Telegram token retrieval/rotation/provisioning,
-state initialization, Caddy reload, real submissions, customer messages or
-special historical test UUIDs. Preserve the existing forms data and shared sites.
+CI artifact retention is requested for90days, subject to repository policy. Do
+not substitute/rebuild an expired artifact silently; deliberately revalidate an
+older version in a recovery task. Installed files/receipts are not auto-pruned.
+
+On lost/failed publication, inspect existing status/journal. SSH may have already
+activated code. Do not retry mutation or reset data automatically. Interrupted
+staging/backend/UI blocks further automatic switches until reconciled; explicit
+rollback restores code while retaining the maximum run reservation. Failed
+HTTPS readback after switching means code may be changed, not an unchanged site.
+
+With the dedicated restricted key and verified known_hosts, send
+`{"action":"status"}\n` to `ssh qs-deploy@165.245.223.138 qs-release`.
+Only fixed JSON/tar protocol is available, no shell/SCP/SFTP. Status exposes safe
+code/delivery identity/liveness, no environment/ledger contents.
+
+Normal releases need no bot credential retrieval/rotation/provisioning, forms
+state initialization, Caddy reload, real sends or historical special UUIDs.
+Preserve course/Mono/unrelated Caddy and current private application state.

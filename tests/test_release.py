@@ -61,6 +61,9 @@ class ReleaseTests(unittest.TestCase):
         course = self.manager.p('/srv/hair-sites/course/releases/old')
         (course / 'index.html').write_text('unchanged course')
         self.manager.p('/srv/hair-sites/course/current').symlink_to('releases/old')
+        archive = self.root / 'baseline/website.tar'
+        self.manager.operate(self.header(archive, sha=A, current=A, kind='bootstrap'), archive)
+        self.calls.clear()
 
     def run_fake(self, command):
         self.calls.append(command)
@@ -70,10 +73,12 @@ class ReleaseTests(unittest.TestCase):
         fixture(self.source, text, backend)
         out = self.root / ('artifact-' + sha[0])
         build(self.source, sha, out)
+        (out / 'selection.json').write_text(json.dumps({'eligible': True, 'source_sha': sha, 'delivery': {'kind': 'automatic', 'workflow_id': 7, 'run_number': {A: 1, B: 2, C: 3}[sha], 'run_id': {A: 101, B: 102, C: 103}[sha]}}))
         return out / 'website.tar'
 
-    def header(self, path, sha=B, current=A, action='promote'):
-        return {'action': action, 'source_sha': sha, 'expected_current': current, 'archive_sha256': digest(path.read_bytes()), 'bytes': path.stat().st_size}
+    def header(self, path, sha=B, current=A, action='promote', kind=None, number=None):
+        number = number or {A: 1, B: 2, C: 3}[sha]
+        return {'action': action, 'source_sha': sha, 'expected_current': current, 'archive_sha256': digest(path.read_bytes()), 'bytes': path.stat().st_size, 'delivery': {'kind': kind or ('rollback' if action == 'rollback' else 'automatic'), 'workflow_id': 7, 'run_number': number, 'run_id': 100 + number}}
 
     def protected_bytes(self):
         return {p: self.manager.p(p).read_bytes() for p in ['/var/lib/qs-forms/outcomes.json', '/etc/qs-forms/telegram.env', '/etc/caddy/Caddyfile', '/srv/hair-sites/course/current/index.html']}
@@ -208,7 +213,7 @@ class ReleaseTests(unittest.TestCase):
         path = self.artifact()
         self.manager.operate(self.header(path), path)
         self.calls.clear()
-        result = self.manager.operate(self.header(path, current=B), path)
+        result = self.manager.operate(self.header(path, current=B, number=3), path)
         self.assertEqual(result['status'], 'already_current_verified')
         self.assertFalse(any('systemctl' in c[0] for c in self.calls))
 
@@ -251,21 +256,31 @@ class ReleaseTests(unittest.TestCase):
         class Reply:
             returncode = 255
             stdout = b''
-        with patch.dict(os.environ, {'QS_DEPLOY_SSH_KEY': 'synthetic-local-key', 'QS_KNOWN_HOSTS': '165.245.223.138 ssh-ed25519 synthetic-public-key'}), patch('deploy.subprocess.run', return_value=Reply()) as run, patch('deploy.public_readback') as readback:
+        def ssh(command, input, **kwargs):
+            if input == b'{"action":"status"}\n':
+                return SimpleNamespace(returncode=0, stdout=canonical(self.manager.status()))
+            header, payload = input.split(b'\n', 1)
+            incoming = self.root / 'lost-reply-input.tar';incoming.write_bytes(payload)
+            self.manager.operate(json.loads(header), incoming)
+            return Reply()
+        with patch.dict(os.environ, {'QS_DEPLOY_SSH_KEY': 'synthetic-local-key', 'QS_KNOWN_HOSTS': '165.245.223.138 ssh-ed25519 synthetic-public-key'}), patch('deploy.subprocess.run', side_effect=ssh) as run, patch('deploy.public_readback') as readback, patch('deploy.latest_main', return_value=B), patch('deploy.is_ancestor', return_value=True):
             with self.assertRaisesRegex(ValueError, 'unconfirmed'):
                 deploy('promote', archive.parent, A, report)
-            self.assertEqual(run.call_count, 1)
+            self.assertEqual(run.call_count, 2)
             readback.assert_not_called()
             args = run.call_args.args[0]
             self.assertFalse(Path(args[args.index('-i') + 1]).exists())
         data = (report / 'result.json').read_text()
         self.assertNotIn('synthetic-local-key', data)
-        self.assertEqual(json.loads(data)['status'], 'SSH_invocation_started_unknown_until_receipt')
+        self.assertEqual(json.loads(data)['status'], 'SSH_mutation_started_unknown_until_receipt')
+        self.assertEqual(self.manager.status()['source_sha'], B)
 
     def test_driver_protocol_to_receiver_and_public_readback_success(self):
         archive = self.artifact();report = self.root / 'success-report'
         def ssh(command, input, **kwargs):
             self.assertIn('qs-deploy@165.245.223.138', command)
+            if input == b'{"action":"status"}\n':
+                return SimpleNamespace(returncode=0, stdout=canonical(self.manager.status()))
             header, payload = input.split(b'\n', 1)
             incoming = self.root / 'ssh-input.tar';incoming.write_bytes(payload)
             response = self.manager.operate(json.loads(header), incoming)
@@ -278,9 +293,9 @@ class ReleaseTests(unittest.TestCase):
         class Opener:
             def open(self, url, timeout):return Response(b'next')
         readback = lambda manifest: public_readback(manifest, opener=Opener())
-        with patch.dict(os.environ, {'QS_DEPLOY_SSH_KEY': 'synthetic-local-key', 'QS_KNOWN_HOSTS': '165.245.223.138 ssh-ed25519 synthetic-public-key'}), patch('deploy.subprocess.run', side_effect=ssh) as run, patch('deploy.public_readback', side_effect=readback):
+        with patch.dict(os.environ, {'QS_DEPLOY_SSH_KEY': 'synthetic-local-key', 'QS_KNOWN_HOSTS': '165.245.223.138 ssh-ed25519 synthetic-public-key'}), patch('deploy.subprocess.run', side_effect=ssh) as run, patch('deploy.public_readback', side_effect=readback), patch('deploy.latest_main', return_value=B), patch('deploy.is_ancestor', return_value=True):
             result = deploy('promote', archive.parent, A, report)
-        self.assertEqual(run.call_count, 1)
+        self.assertEqual(run.call_count, 2)
         self.assertEqual(result['status'], 'PASS_activated_and_read_back')
         self.assertEqual(result['source_sha'], B)
         self.assertNotIn('synthetic-local-key', (report / 'result.json').read_text())

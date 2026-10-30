@@ -1,85 +1,100 @@
-# One-time remote activation — candidate, NOT EXECUTED
+# One-time QS auto-CD activation — NOT EXECUTED
 
-Owner scope currently allows local engineering plus bounded read-only GitHub/SSH.
-The steps below require independently reviewed exact files and a separate narrow
-activation assignment. Existing approvals within that assignment suffice; no
-new Telegram credential or form test is needed.
+The owner chose automatic publication after merge to main on30Oct. Routine
+releases must not wait for an environment reviewer/conversational approval.
+This LOCAL candidate still requires independent exact-file review followed by
+the separately authorized one-time remote setup below; no setup was executed.
 
-## Verified preparation facts
+Preparation observations: GitHub7Ilia7/QS public/admin7Ilia7, defaultmain at
+6a296d2bdae6a05e2b104df90e27a9ceab1272ae, unprotected, Actions enabled,
+workflows0/environments0. Live27/11 code matchesqc-20261030-existing-v1,
+forms service active/restarts0. qs-deploy and receiver absent. Refresh these
+bounded facts in the activation assignment, not by reading secrets/state.
 
-GitHub7Ilia7/QS is public; main6a296d2bdae6a05e2b104df90e27a9ceab1272ae,
-unprotected; authenticated7Ilia7 has admin. Actions enabled, no workflows or
-environments. Live public/private code matches frozen27/11 manifests; normal
-qs-forms service active/restarts0. Neither qs-deploy nor /usr/local/sbin/qs-release
-exists. These are30Oct observations, not permanent assumptions; refresh at activation.
+## Ordered bootstrap, before routine automation
 
-## Exact activation changes
-
-1. Publish only the reviewed clean candidate branch, preserving the dirty canonical
-   checkout. Open/review/merge its source adoption and workflows into main; no
-   git-add-all from the old checkout. A PR CI run checks the candidate, then a
-   successful main-push CI run produces `website-<full-main-SHA>`.
-2. Configure repository branch/ruleset protection for main with the actual
-   `Website CI / verify-build` check and review policy selected by the owner.
-   Configure environment `qs-production`: main deployment branch policy, required
-   reviewer7Ilia7 (or an owner-selected reviewer), no implicit unprotected environment.
-   A sole owner must choose whether self-review is permitted; prevent-self-review
-   with only that same owner would make self-triggered runs unapprovable. Do not
-   bypass a waiting protection rule to compensate.
-3. Create ONE dedicated application transport identity/key under the activation
-   scope. Never reuse the existing root SSH key as a GitHub secret. Server system
-   account `qs-deploy` has a locked password and /bin/sh only to support sshd's
-   forced-command execution; it receives no unrestricted shell/key. Home and
-   .ssh are root-owned0755; authorized_keys root0644. The sole key line is:
+1. BEFORE publishing/merging the workflows, set/confirm repository variable
+   `QS_AUTO_CD_READY` unset/false. Job and Python event policy skip automatic
+   operations until this one-time readiness is enabled. Do not merge while an
+   unknown preexisting true flag could race missing transport/config/secrets.
+2. Publish only the independently reviewed clean candidate branch, review/merge
+   source adoption/workflows into main and retain the actual successful main CI
+   run/SHA/artifact ID/digest. Do not publish the canonical dirty directory.
+   The initial workflow_run safely skips while readiness is false.
+3. Protect main with the actual returned Website CI check context and PR/check
+   policy; do not invent a workflow/job context string. Configure environment
+   `qs-production` for main only, with NO required reviewers, wait timers or
+   per-release manual gate. Normal branch review/QA still applies; its approval
+   count follows the owner's project policy, not a new mandatory human gate.
+4. Create the dedicated application transport account/key under the activation
+   scope. Do not reuse the existing broad root SSH key as a GitHub secret. System
+   user `qs-deploy` has a locked password and /bin/sh only for sshd forced-command
+   execution. Home `/var/lib/qs-deploy` and .ssh are root-owned0755, authorized_keys
+   root0644. The sole key line is:
 
    `restrict,command="/usr/bin/sudo -n /usr/local/sbin/qs-release" <PUBLIC_DEPLOY_KEY>`
 
-   Key creation/delivery belongs to protected activation; values do not enter the
-   repository, skill, logs or chat. Store its private half only in environment
-   secret `QS_DEPLOY_SSH_KEY`.
-4. Install the independently reviewed `automation/receiver.py` and
-   `automation/release_lib.py` root:root0644 in `/usr/local/lib/qs-release/`
-   (root0755). Install `automation/qs-release` root0755 at
-   `/usr/local/sbin/qs-release`. Install only the exact sudoers template after
-   `visudo -cf` validation. It permits zero-argument invocation of that endpoint,
-   not arbitrary sudo, systemctl, shell, SCP or SFTP commands.
-5. Install `/etc/qs-release/` root0700 and `config.json` root0600; create
-   `/var/lib/qs-release/` root0700 for the deployment lock/journal/temp files.
-   Generate config locally with `automation/activation_config.py` from the FIRST
-   reviewed successful main CI's `release.json`. Its source SHA becomes the
-   baseline alias for the already published qc-20261030-existing-v1 paths.
-   Before installation, verify EVERY27/11 file against that manifest on the
-   existing baseline paths and confirm current pointers/unit/shared identity.
-   If the first approved main build's product bytes differ, STOP: it cannot be
-   labelled as already deployed. Separate the byte-identical source adoption
-   from subsequent site changes. The alias enables initial rollback without
-   copying or redeploying the baseline or inventing a source SHA.
-6. Set environment variable `QS_KNOWN_HOSTS` to the verified165.245.223.138 host
-   public-key line, obtained from the trusted existing pin/out-of-band check.
-   Do not establish trust by blindly accepting ssh-keyscan output. No host-key
-   bypass, DNS/firewall/listener/Caddy change is required.
-7. Use the restricted key to request `{"action":"status"}` on stdin. Confirm
-   baseline SHA, exact code match and private liveness; check negative forced
-   command/invalid request cannot obtain a shell or write outside the endpoint.
-   Record installed helper/config hashes and actual environment/secret NAME
-   presence, never secret values. Run the first approved production dispatch
-   against the baseline SHA: `already_current_verified` plus full HTTPS readback
-   validates delivery integration without switching byte-identical code.
+   Key values stay in protected activation handling, never repo/skill/logs/chat.
+   Store only its private half in environment secret `QS_DEPLOY_SSH_KEY`.
+5. Install reviewed `automation/receiver.py`, `release_lib.py` and
+   `delivery_policy.py` root0644 in `/usr/local/lib/qs-release/` root0755.
+   Install reviewed wrapper `automation/qs-release` root0755 as
+   `/usr/local/sbin/qs-release`. Validate exact `automation/qs-release.sudoers`
+   with `visudo -cf` and install root0440: only zero-argument endpoint invocation,
+   no arbitrary sudo/systemctl/shell/SCP/SFTP. Wrapper uses absolute Python `-I`.
+6. Create `/etc/qs-release/` root0700, config.json root0600 and
+   `/var/lib/qs-release/` root0700 for lock/journal/temp files. Generate nonsecret
+   config with reviewed activation_config.py from the FIRST successful reviewed
+   main CI's release.json. Its full source SHA aliases the already deployed
+   qc-20261030-existing-v1 public/private paths. Verify EVERY27/11 file against
+   that manifest on the baseline paths before installation. If bytes differ,
+   STOP: do not label a changed product as already deployed. Separate identical
+   source adoption from later site feature changes. Confirm current unit/shared
+   identity; the baseline mapping must not be a guessed Git SHA.
+7. Set environment variable `QS_KNOWN_HOSTS` to the verified165.245.223.138 public
+   host-key line from the existing trusted pin/out-of-band check; do not establish
+   trust by blindly accepting ssh-keyscan output. Install environment secret NAME
+   QS_DEPLOY_SSH_KEY via protected handling, never displaying its value.
+8. Test the restricted endpoint's `{"action":"status"}` and negative command/
+   invalid request boundaries. Retain installed helper/config hashes, current
+   code/health and environment/secret NAME presence, not secret values. With
+   readiness still false, dispatch ONE `bootstrap` using that initial successful
+   main CI source SHA/run. Require `bootstrap_verified`, unchanged code pointers/
+   service and full HTTPS content readback. It registers CI ordering metadata in
+   the deployment journal, not the forms ledger. No provider call or form send.
+9. Recheck main still equals that exact bootstrapped SHA. Only after verified
+   transport/config/key/pin/secret/status/HTTPS bootstrap, set repository variable
+   `QS_AUTO_CD_READY=true` ONCE. Every later merged main push uses CI→automatic CD;
+   no recurring reviewer or enablement. If main advanced, stop/reconcile the exact
+   reviewed baseline mapping before enablement. Lost bootstrap outcome means
+   inspect existing status/journal/public bytes, not blindly repeat registration.
 
-Later promotions only use that transport. The receiver does not read/provision
-the credential, initialize/reset the forms state, restore a ledger, edit Caddy,
-change course/Mono, create resources or make Bot API calls. A changed backend
-uses only `systemctl restart qs-forms.service`; static-only promotion has no
-restart. Backend restarts can leave an in-flight request ambiguous; the existing
-durable handler reconciles it without resending. Schema/data migrations are not
-part of this code-only mechanism and require a compatible release plan.
+Normal receiver actions never read/provision credential values, initialize/reset
+forms state, restore ledger/HMAC, edit Caddy, touch course/Mono or send Bot API
+requests. Only changed private code restarts the existing qs-forms.service;
+static-only publication does not. Backend restarts may leave an in-flight
+request ambiguous; durable reconciliation never automatically resends it.
+Schema/data migrations need a compatible application plan outside this code switch.
 
-## Activation readback
+## Ordering and actual acceptance
 
-Retain actual PR/main CI IDs, selected source SHA/artifact ID/digest, configured
-environment/protection metadata, restricted transport tests, receiver operation
-receipt,27 HTTPS content results, private loopback status and unchanged shared
-service/configuration metadata. Local YAML/actionlint/tests do not prove any of
-these remote outcomes. Both old real form fixtures are exhausted; do not submit
-them again or reset the ledger/HMAC. Independent review routes the exact local
-candidate before this activation, with no new generic role/runtime policy.
+Automatic selection binds exact successful trusted main-push CI/run/SHA/ZIP
+digest/internal allowlist, without rebuilding. A serialized non-cancelling
+production job queue retains pending events (`queue: max`); queue order itself
+is not trusted. Latest-main checks, ancestry/CAS and a durable maximum CI run
+reservation prevent stale/duplicate/out-of-order publication. Manual rollback
+keeps the maximum. Interrupted phases require reconciliation; deleting/recreating
+the CI workflow identity requires reviewed deployment-metadata maintenance,
+never a forms-state reset. The queue has GitHub's documented admission limit.
+
+Retain actual source/CI/artifact IDs/digests, branch/environment configuration,
+restricted transport tests, bootstrap/automatic/rollback receipts,27 HTTPS
+hash/size/MIME/TLS results and unchanged shared metadata. Local tests do not prove
+Linux/GitHub execution. Existing real form quotas are exhausted; never replay.
+
+Primary references: [workflow_run](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_run),
+[production queue/concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency),
+[environments](https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments).
+Actionlint1.7.12 predates the documented queue key. Retain its raw diagnostic;
+the remaining syntax can be checked with only that unsupported-key diagnostic
+excluded. Actual GitHub workflow acceptance remains part of remote activation.

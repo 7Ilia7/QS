@@ -20,6 +20,7 @@ import uuid
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from release_lib import MAX_BYTES, SHA, HASH, canonical, digest, require, validate_manifest, verify_archive
+from delivery_policy import validate_delivery, is_new_auto_run, TERMINAL_PHASES
 
 PUBLIC = '/srv/hair-sites/qc'
 PRIVATE = '/srv/hair-sites/qc-backend'
@@ -200,8 +201,10 @@ class Manager:
         return public, private
 
     def operate(self, header, archive):
-        require(set(header) == {'action', 'source_sha', 'expected_current', 'archive_sha256', 'bytes'}, 'request_fields')
+        require(set(header) == {'action', 'source_sha', 'expected_current', 'archive_sha256', 'bytes', 'delivery'}, 'request_fields')
         require(header['action'] in {'promote', 'rollback'}, 'request_action')
+        delivery = validate_delivery(header['delivery'])
+        require((delivery['kind'] == 'rollback') == (header['action'] == 'rollback'), 'delivery_action')
         require(SHA.fullmatch(header['source_sha']) and SHA.fullmatch(header['expected_current']), 'request_SHA')
         require(HASH.fullmatch(header['archive_sha256']) and type(header['bytes']) is int and header['bytes'] == archive.stat().st_size, 'request_archive')
         require(digest(archive.read_bytes()) == header['archive_sha256'], 'transport_digest')
@@ -213,15 +216,27 @@ class Manager:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
             current = self.current()
             require(current['source_sha'] == header['expected_current'], 'stale_current_SHA')
+            journal_path = self.p(CONTROL + '/last-operation.json')
+            previous = json.loads(journal_path.read_text()) if journal_path.exists() else {}
+            maximum = previous.get('max_automatic_run')
+            if delivery['kind'] == 'automatic':
+                require(is_new_auto_run(delivery, maximum), 'stale_or_duplicate_CI_run')
+                require(previous.get('phase') in TERMINAL_PHASES, 'prior_operation_unconfirmed_manual_reconcile')
+            elif delivery['kind'] == 'bootstrap':
+                require(maximum is None, 'bootstrap_already_registered')
+                require(m['source_sha'] == current['source_sha'] == self.config['baseline_manifest']['source_sha'], 'bootstrap_baseline_identity')
+            elif maximum is not None:
+                require(delivery['workflow_id'] == maximum['workflow_id'], 'CI_workflow_identity_changed')
             shared = self.shared()
             target_public, target_private = self.paths(m['source_sha'])
             if header['action'] == 'promote' and current['source_sha'] == m['source_sha']:
                 self.verify_installed(m, self.pointer(PUBLIC), self.pointer(PRIVATE))
                 require(self.health(), 'existing_release_unhealthy')
-                return {'status': 'already_current_verified', **self.status()}
+                phase = 'bootstrap_verified' if delivery['kind'] == 'bootstrap' else 'already_current_verified'
+                atomic_json(journal_path, {'phase': phase, 'action': header['action'], 'source_sha': m['source_sha'], 'previous_sha': current['source_sha'], 'delivery': delivery, 'max_automatic_run': delivery, 'finished_at': time.time()})
+                return {'status': phase, **self.status()}
             require(self.health() or header['action'] == 'rollback', 'initial_handler_unhealthy')
-            journal = {'action': header['action'], 'source_sha': m['source_sha'], 'previous_sha': current['source_sha'], 'phase': 'staging_reserved', 'started_at': time.time()}
-            journal_path = self.p(CONTROL + '/last-operation.json')
+            journal = {'action': header['action'], 'source_sha': m['source_sha'], 'previous_sha': current['source_sha'], 'phase': 'staging_reserved', 'started_at': time.time(), 'delivery': delivery, 'max_automatic_run': delivery if delivery['kind'] == 'automatic' else maximum}
             atomic_json(journal_path, journal)
             if header['action'] == 'promote':
                 target_public, target_private = self.stage(archive, m)
