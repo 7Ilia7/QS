@@ -1,3 +1,18 @@
+# Activation acceptance session — 30 October 2026
+
+Reviewed V2 was adopted through PR #4. Initial main source
+`3d36a3c0305500a5e57b4853da210c67f856ee47` passed Website CI run
+`41111303024`; its exact artifact was independently downloaded and verified.
+The restricted Linux transport and the main-only production environment are
+installed. One-time bootstrap run `41114066361` passed all 27 HTTPS file checks
+with unchanged private code, service processes and forms-state metadata.
+`QS_AUTO_CD_READY=true` was enabled only after that verified bootstrap.
+
+This documentation-only follow-up exercises ordinary merge → main CI →
+automatic publication. It changes no site, application, workflow or transport
+bytes. Actual automatic-release/rollback results and independent final QA are
+recorded separately; this commit does not claim those pending checks passed.
+
 # Implementation session — 30 October 2026
 
 V2 correction handoff evt-owner-cb0d826b6dfae083291367c4: after independent V1
