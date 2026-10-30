@@ -206,8 +206,6 @@ class Manager:
         require(HASH.fullmatch(header['archive_sha256']) and type(header['bytes']) is int and header['bytes'] == archive.stat().st_size, 'request_archive')
         require(digest(archive.read_bytes()) == header['archive_sha256'], 'transport_digest')
         m = verify_archive(archive, header['source_sha'])
-        private_paths = {r['path'] for r in m['files'] if r['component'] == 'private'}
-        require(private_paths == {r['path'] for r in self.config['baseline_manifest']['files'] if r['component'] == 'private'}, 'private_topology_change_requires_reviewed_receiver_update')
         for base in [PUBLIC, PRIVATE, PUBLIC + '/releases', PRIVATE + '/releases', CONTROL]:
             self.secure_directory(self.p(base))
         with self.p(CONTROL + '/lock').open('a+b') as lock:
@@ -240,7 +238,9 @@ class Manager:
             self.secure_directory(previous_private)
             for path in previous_private.rglob('*'):
                 require(not path.is_symlink(), 'previous_code_symlink')
-            backend_changed = any(not (previous_private / r['path']).is_file() or digest((previous_private / r['path']).read_bytes()) != r['sha256'] for r in m['files'] if r['component'] == 'private')
+            previous_private_hashes = {p.relative_to(previous_private).as_posix(): digest(p.read_bytes()) for p in previous_private.rglob('*') if p.is_file()}
+            selected_private_hashes = {r['path']: r['sha256'] for r in m['files'] if r['component'] == 'private'}
+            backend_changed = previous_private_hashes != selected_private_hashes
             journal.update(phase='backend_switch_reserved', backend_restart_needed=backend_changed)
             atomic_json(journal_path, journal)
             self.switch(PRIVATE, target_private)

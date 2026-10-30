@@ -285,6 +285,22 @@ class ReleaseTests(unittest.TestCase):
         self.assertEqual(result['source_sha'], B)
         self.assertNotIn('synthetic-local-key', (report / 'result.json').read_text())
 
+    def test_private_file_addition_and_removal_use_same_scoped_release_path(self):
+        (self.source / 'app/backend/helper.py').write_text('helper = True\n')
+        allow = json.loads((self.source / 'release/allowlist.json').read_text())
+        allow['private'] = ['backend/helper.py', 'backend/server.py']
+        (self.source / 'release/allowlist.json').write_text(json.dumps(allow))
+        out = self.root / 'added-private'
+        build(self.source, B, out)
+        path = out / 'website.tar'
+        self.manager.operate(self.header(path), path)
+        self.assertTrue((self.manager.pointer(PRIVATE) / 'backend/helper.py').is_file())
+        baseline_archive = self.root / 'baseline/website.tar'
+        self.manager.operate(self.header(baseline_archive, sha=A, current=B, action='rollback'), baseline_archive)
+        restarts = [c for c in self.calls if 'systemctl' in c[0]]
+        self.assertEqual(len(restarts), 2)
+        self.assertFalse((self.manager.pointer(PRIVATE) / 'backend/helper.py').exists())
+
 
 if __name__ == '__main__':
     unittest.main()
