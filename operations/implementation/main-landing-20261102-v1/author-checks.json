@@ -1,0 +1,73 @@
+{
+  "tier": "AUTHOR REAL LOCAL UI + MOCKED recovery GET; external map aborted",
+  "url": "http://127.0.0.1:8024/",
+  "results": [
+    {
+      "name": "fresh root starts at top, no automatic form focus",
+      "status": "PASS",
+      "time": "2026-11-02T19:28:20.179Z"
+    },
+    {
+      "name": "section order and genuine gallery assets",
+      "status": "PASS",
+      "time": "2026-11-02T19:28:20.361Z"
+    },
+    {
+      "name": "all tariff boundaries and optional removal for both masters",
+      "status": "PASS",
+      "time": "2026-11-02T19:28:21.911Z"
+    },
+    {
+      "name": "empty zero negative and invalid weights never quote price",
+      "status": "PASS",
+      "time": "2026-11-02T19:28:21.960Z"
+    },
+    {
+      "name": "all price categories accessible; full matrix captured",
+      "status": "PASS",
+      "time": "2026-11-02T19:28:22.098Z"
+    },
+    {
+      "name": "gallery modal opens and closes by Escape",
+      "status": "PASS",
+      "time": "2026-11-02T19:28:22.209Z"
+    },
+    {
+      "name": "contact anchors remain intentional; reload and history retain scroll",
+      "status": "PASS",
+      "time": "2026-11-02T19:28:23.541Z"
+    },
+    {
+      "name": "forms have consent, validation and privacy without POST",
+      "status": "PASS",
+      "time": "2026-11-02T19:28:23.611Z"
+    },
+    {
+      "name": "desktop contact three cards align",
+      "status": "PASS",
+      "time": "2026-11-02T19:28:23.806Z"
+    },
+    {
+      "name": "stored unknown recovery stays locked without startup focus (mocked GET)",
+      "status": "PASS",
+      "time": "2026-11-02T19:28:24.207Z"
+    },
+    {
+      "name": "mobile layout menu keyboard and table containment",
+      "status": "PASS",
+      "time": "2026-11-02T19:28:25.311Z"
+    },
+    {
+      "name": "mobile form buttons remain reachable above fixed booking link",
+      "status": "PASS",
+      "time": "2026-11-02T19:28:25.432Z"
+    },
+    {
+      "name": "user scrolling before load is not reset",
+      "status": "PASS",
+      "time": "2026-11-02T19:28:26.368Z"
+    }
+  ],
+  "posts": 0,
+  "errors": []
+}
