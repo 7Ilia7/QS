@@ -1,4 +1,16 @@
 'use strict';
+// A new root visit starts at the introduction. Hashes, reload and history retain
+// native browser restoration; never reset scroll after user interaction.
+let interactedBeforeLoad = false;
+['pointerdown', 'wheel', 'touchmove', 'keydown'].forEach(type => {
+  window.addEventListener(type, () => { interactedBeforeLoad = true; }, {once: true, passive: true});
+});
+window.addEventListener('pageshow', event => {
+  const navigation = performance.getEntriesByType('navigation')[0];
+  if (!event.persisted && !interactedBeforeLoad && navigation?.type === 'navigate' && !location.hash) {
+    window.scrollTo({top: 0, left: 0, behavior: 'instant'});
+  }
+}, {once: true});
 // Booking is a conversation with the studio, not an automatic API submission.
 document.documentElement.classList.add('js');
 const menuButton = document.getElementById('hamburger');
@@ -50,30 +62,38 @@ lightbox?.addEventListener('click', event => {
   if (event.target === lightbox && (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom)) lightbox.close();
 });
 
-// Preserve the existing studio model and label it as an estimate.
+// Published work-only tariffs use half-open intervals at 50, 100 and 200 g.
 const calc = document.getElementById('calcForm');
-const length = document.getElementById('calc-length');
-const strands = document.getElementById('calc-strands');
-const presets = document.querySelectorAll('.calc__presets button');
-const rates = new Map([[35,48],[40,55],[45,62],[50,70],[55,78],[60,86],[65,92]]);
+const grams = document.getElementById('calc-grams');
+const master = document.getElementById('calc-master');
+const removal = document.getElementById('calc-removal');
+const money = value => new Intl.NumberFormat('uk-UA').format(value) + ' ₴';
+const workRates = {master: [3100, 5300, 7500, 9700], olena: [4400, 6600, 8800, 11000]};
 function updateEstimate() {
   if (!calc) return;
-  const lengthCm = Number(length.value), count = Number(strands.value);
-  const extra = [...calc.querySelectorAll('input[name="extra"]:checked')].reduce((sum, input) => sum + Number(input.dataset.price), 0);
-  const total = rates.get(lengthCm) * count + extra;
-  document.getElementById('calc-length-value').textContent = `${lengthCm} см`;
-  document.getElementById('calc-strands-value').textContent = `${count} шт`;
-  document.getElementById('calc-price').textContent = `${new Intl.NumberFormat('uk-UA').format(total)} ₴`;
-  presets.forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.length) === lengthCm && Number(button.dataset.strands) === count)));
-  document.getElementById('whatsapp-booking').href = `https://wa.me/380985601157?text=${encodeURIComponent(`Добрий день! Хочу консультацію щодо нарощування: ${lengthCm} см, ${count} пасм. Орієнтир калькулятора: ${total} грн. Підкажіть, будь ласка, варіанти та вільні дати.`)}`;
+  const weight = grams.valueAsNumber, rates = workRates[master.value];
+  const valid = grams.value.trim() !== '' && Number.isFinite(weight) && weight > 0 && rates;
+  const whatsapp = document.getElementById('whatsapp-booking');
+  if (!valid) {
+    grams.setAttribute('aria-invalid', 'true');
+    document.getElementById('calc-price').textContent = '—';
+    document.getElementById('calc-breakdown').textContent = 'Введіть додатну вагу волосся в грамах.';
+    document.getElementById('calc-explanation').textContent = 'Розрахунок недоступний до введення ваги. Волосся оплачується окремо.';
+    if (whatsapp) whatsapp.href = 'https://wa.me/380985601157?text=' + encodeURIComponent('Добрий день! Хочу консультацію щодо нарощування. Допоможіть підібрати вагу волосся та майстра.');
+    return;
+  }
+  grams.removeAttribute('aria-invalid');
+  const bracket = weight < 50 ? 0 : weight < 100 ? 1 : weight < 200 ? 2 : 3;
+  const work = rates[bracket], extra = removal.checked ? 1300 : 0, total = work + extra;
+  const label = master.selectedOptions[0].textContent;
+  document.getElementById('calc-price').textContent = money(total);
+  document.getElementById('calc-breakdown').textContent = 'Робота: ' + money(work) + (extra ? ' + зняття: ' + money(extra) + ' = ' + money(total) : '. Зняття не додано.');
+  document.getElementById('calc-explanation').textContent = 'Волосся оплачується окремо. Остаточний підбір узгоджуємо на консультації.';
+  if (whatsapp) whatsapp.href = 'https://wa.me/380985601157?text=' + encodeURIComponent('Добрий день! Хочу консультацію щодо нарощування: ' + weight + ' г, ' + label + '. Розрахунок роботи: ' + money(work) + (extra ? ', зняття: ' + money(extra) : '') + '. Разом за роботу: ' + money(total) + ', без вартості волосся. Підкажіть варіанти та вільні дати.');
 }
 calc?.addEventListener('input', updateEstimate);
+calc?.addEventListener('change', updateEstimate);
 calc?.addEventListener('submit', event => event.preventDefault());
-presets.forEach(button => button.addEventListener('click', () => {
-  length.value = button.dataset.length;
-  strands.value = button.dataset.strands;
-  updateEstimate();
-}));
 updateEstimate();
 
 // Large local videos load after explicit interaction; the map is inline/lazy.

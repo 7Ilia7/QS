@@ -1,3 +1,18 @@
+# Main landing candidate — 2 November 2026
+
+Local candidate from freshly fetched main: studio-first introduction, complete
+text service prices, approved before/after/capsule media, grams/master calculator
+for work only, and aligned map/callback/private-review cards. Fresh hashless
+navigation starts at top; anchors, reload/history and user scroll are preserved.
+The original bottom-opening cause was not reproduced and remains unknown.
+
+13 local author browser checks and static asset references pass; no POST was
+attempted. Map rendering and real delivery were not tested. Backend, form
+controller, privacy, release allowlist and CI/CD remain unchanged.
+See operations/implementation/main-landing-20261102-v1/READY_FOR_QA.md for the
+exact frozen candidate and evidence. Independent QA and owner-approved release
+remain pending; this local candidate has not been pushed or deployed.
+
 # V3 readback resilience — LOCAL implementation, 30 October 2026
 
 Handoff `evt-owner-97534d488022fdb89d54ea6a` addresses independent live QA finding
