@@ -1,0 +1,17 @@
+[
+  {
+    "variant": "a-editorial",
+    "outside_HTML_scope": "byte-identical after masking authorized blocks/title/review",
+    "review_code_preserved_exact": true
+  },
+  {
+    "variant": "b-noir",
+    "outside_HTML_scope": "byte-identical after masking authorized blocks/title/review",
+    "review_code_preserved_exact": true
+  },
+  {
+    "variant": "c-atelier",
+    "outside_HTML_scope": "byte-identical after masking authorized blocks/title/review",
+    "review_code_preserved_exact": true
+  }
+]
