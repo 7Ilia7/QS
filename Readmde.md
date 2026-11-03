@@ -1,3 +1,17 @@
+# Local visual option B — 2 November 2026
+
+Night Luxury — immersive dark authentic photo, studio inset and image-led bento service cards with native grouped price details.
+
+Separate branch codex/qs-visual-b-noir from fresh main bd5044c. Preview:
+http://127.0.0.1:8032/#about and http://127.0.0.1:8032/#services. This is a local owner
+comparison, with eight author smoke groups passing and no POST attempts. The
+private review form is fully commented and preserved; callback remains enabled.
+Price values, broader HTML, backend/forms controller and CI/CD are preserved.
+See operations/implementation/visual-options-20261102-v1/READY_FOR_QA.md for the
+exact frozen build, evidence, owned server PID and start/stop commands. Server
+remains running. No option is owner-approved, published or selected by this task.
+Explicit chosen-version owner approval is required before future merge/release.
+
 # Main landing candidate — 2 November 2026
 
 Local candidate from freshly fetched main: studio-first introduction, complete
