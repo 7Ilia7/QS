@@ -96,3 +96,24 @@ promotion remain separate activation work after independent review. Initial
 failed checks and corrections are preserved in the canonical implementation
 packet operations/deployment/cicd/20261030-v1. Exact final source/skill digests,
 commands and outcomes are in that packet's READY_FOR_QA/freeze/verification.
+# Content-ready LOCAL preview — 4 November 2026
+
+Branch codex/qs-content-ready-20261104 starts from fresh main8a803389. New
+keyboard/touch case comparison slots and capsule lightbox, detailed calculator
+and discuss-to-callback context, team slots, compact mobile booking, genuine-review
+and FAQ components are ready for owner content. All25price rows/59values remain.
+Default content contains no invented people, quotes, ratings or new case pair.
+Edit site/content.json using operations/implementation/content-ready-20261104-v1/CONTENT-GUIDE.md.
+
+Local preview http://127.0.0.1:8044/ stays running. Thirteen author groups pass;
+three explicit mocked POSTs, ZERO forwardedPOST/provider effects. Optional estimate
+uses a strict version1 capability gate; ordinary callback stays compatible.
+Private backend is UNCHANGED and does not support estimate yet: canonical backend
+and a new combined build/independent QA follow web writer stop, not a release now.
+
+SEO inventory and honest domain/Ads backlog: operations/seo/SEO-ADS-BACKLOG.md.
+Draft preview is noindex/robots-blocked; existing sslip metadata is baseline,
+chosen domain and account activation remain pending. No server or Google changes.
+READY_FOR_QA and exact external freeze/build paths are in the implementation folder.
+Owner local approval remains pending; prior B approval does not approve new bytes.
+

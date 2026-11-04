@@ -6,13 +6,55 @@ document.querySelectorAll('.customer-form').forEach(form => {
   const check = form.querySelector('.form-check'), fresh = form.querySelector('.form-new');
   const submit = form.querySelector('[type=submit]'), original = submit.textContent;
   let requestId = null, busy = false, locked = false;
+  const context = type === 'callback' ? document.getElementById('callback-estimate-context') : null;
+  const includeEstimate = context?.querySelector('#callback-include-estimate');
+  const contextSummary = context?.querySelector('#callback-estimate-summary');
+  const supportNote = context?.querySelector('#callback-estimate-support');
+  const changeNote = context?.querySelector('#callback-estimate-change');
+  let estimateSupported = null, capabilityBusy = false, requestEstimate = null;
+  const calculation = () => window.qsCalculation?.get() || null;
+  function refreshEstimateContext() {
+    if (!context) return;
+    const draft = calculation(), shown = (locked || busy) && requestEstimate ? requestEstimate : draft;
+    contextSummary.textContent = shown
+      ? shown.masterLabel + ' · ' + shown.grams + ' г · ' + shown.range + '. Робота: ' + shown.work + ' грн; зняття: ' + shown.extra + ' грн; разом: ' + shown.total + ' грн.'
+      : 'Розрахунок недоступний. Введіть додатну вагу в калькуляторі або приберіть позначку додавання.';
+    includeEstimate.disabled = locked || busy;
+    const changed = requestEstimate && JSON.stringify([draft?.master,draft?.grams,draft?.removal]) !== JSON.stringify([requestEstimate.master,requestEstimate.grams,requestEstimate.removal]);
+    changeNote.hidden = !changed;
+    changeNote.textContent = changed ? 'Зміни калькулятора не змінюють це звернення. Тут показано його початковий розрахунок. Перевірте стан звернення.' : '';
+    submit.disabled = locked || busy || Boolean(includeEstimate.checked && (!draft || estimateSupported !== true));
+    if (includeEstimate.checked) supportNote.textContent = capabilityBusy ? 'Перевіряємо можливість додати розрахунок…' : estimateSupported === true ? 'До заявки буде додано цей розрахунок роботи. Він не підтверджує дату запису.' : 'Додавання розрахунку поки недоступне. Приберіть позначку, щоб залишити лише номер для дзвінка.';
+    else supportNote.textContent = 'Без позначки заявка міститиме лише контактні дані, без розрахунку.';
+  }
+  async function discoverEstimateSupport() {
+    if (estimateSupported !== null || capabilityBusy) return;
+    capabilityBusy = true; refreshEstimateContext();
+    const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 4000);
+    try {
+      const response = await fetch('/api/forms/capabilities',{method:'GET',credentials:'same-origin',cache:'no-store',redirect:'error',signal:controller.signal});
+      const data = await response.json();
+      estimateSupported = response.status === 200 && data?.estimate?.version === 1;
+    } catch { estimateSupported = false; }
+    finally { clearTimeout(timer); capabilityBusy = false; refreshEstimateContext(); }
+  }
+  if (context) {
+    includeEstimate.addEventListener('change',refreshEstimateContext);
+    document.addEventListener('qs:estimate-change',refreshEstimateContext);
+    document.addEventListener('qs:callback-open',event => {
+      if (event.detail?.attach && !locked && !busy) {
+        context.hidden = false; includeEstimate.checked = true;
+        refreshEstimateContext(); discoverEstimateSupport();
+      }
+    });
+  }
   const uuidV4 = value => typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(value);
   const points = value => [...value].length;
   const controls = value => /[\u0000-\u0008\u000b-\u001f]/.test(value);
   const save = () => { try { sessionStorage.setItem(key, requestId); return sessionStorage.getItem(key) === requestId; } catch { return false; } };
   const forget = () => { try { sessionStorage.removeItem(key); } catch {} requestId = null; };
   function announce(text) { status.textContent = text; }
-  function lock(value) { locked = value; fieldset.disabled = value; }
+  function lock(value) { locked = value; fieldset.disabled = value; if (!value) requestEstimate = null; refreshEstimateContext(); }
   function uncertain() {
     lock(true); check.hidden = false;
     const hasDraft = [...form.querySelectorAll('input:not([type=checkbox]),textarea')].some(input => input.value.trim().length > 0);
@@ -62,6 +104,14 @@ document.querySelectorAll('.customer-form').forEach(form => {
     if (form.querySelector('[aria-invalid=true]')) {
       announce('Перевірте позначені поля.'); form.querySelector('[aria-invalid=true]').focus(); return null;
     }
+    if (type === 'callback' && includeEstimate?.checked) {
+      const estimate = calculation();
+      if (estimateSupported !== true || !estimate) {
+        announce('Не вдалося додати поточний розрахунок. Перевірте вагу або приберіть позначку додавання.');
+        return null;
+      }
+      data.estimate = {version:1,master:estimate.master,grams:estimate.grams,removal:estimate.removal};
+    }
     return data;
   }
   async function exchange(url, options) {
@@ -70,7 +120,7 @@ document.querySelectorAll('.customer-form').forEach(form => {
       const response = await fetch(url,{...options,credentials:'same-origin',cache:'no-store',redirect:'error',signal:controller.signal});
       const data = await response.json(); reconcile(data,response.status,options.method === 'POST');
     } catch { uncertain(); }
-    finally { clearTimeout(timer); busy = false; form.removeAttribute('aria-busy'); check.disabled = false; submit.textContent = original; }
+    finally { clearTimeout(timer); busy = false; form.removeAttribute('aria-busy'); check.disabled = false; submit.textContent = original; refreshEstimateContext(); }
   }
   form.addEventListener('submit',event => {
     event.preventDefault(); if (busy || locked) return;
@@ -81,6 +131,7 @@ document.querySelectorAll('.customer-form').forEach(form => {
       invalid(type === 'review' ? 'review' : 'name','Звернення завелике. Скоротіть текст.'); announce('Звернення не надіслано: завеликий розмір.'); return;
     }
     if (!save()) { announce('Заявку не надіслано: браузер не дозволяє зберегти технічний ідентифікатор для перевірки доставки. Зателефонуйте студії.'); return; }
+    requestEstimate = data.estimate ? calculation() : null;
     busy = true; lock(true); form.setAttribute('aria-busy','true'); submit.textContent = 'Надсилаємо…'; check.hidden = true; fresh.hidden = true;
     announce('Очікуємо підтвердження доставки…');
     exchange('/api/forms',{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':requestId},body});
@@ -90,7 +141,7 @@ document.querySelectorAll('.customer-form').forEach(form => {
     exchange('/api/forms/status?request_id=' + encodeURIComponent(requestId),{method:'GET'});
   });
   fresh.addEventListener('click',() => {
-    if (busy) return; forget(); form.reset(); lock(false); fresh.hidden = true; check.hidden = true; announce('Можна створити нове звернення.'); form.querySelector('input,textarea').focus();
+    if (busy) return; forget(); form.reset(); if (context) { context.hidden = true; includeEstimate.checked = false; } lock(false); fresh.hidden = true; check.hidden = true; announce('Можна створити нове звернення.'); form.querySelector('input,textarea').focus();
   });
   lock(false);
   try { const stored = sessionStorage.getItem(key); if (stored && uuidV4(stored)) requestId = stored; else if (stored) { lock(true); announce('Збережений ідентифікатор некоректний. Не надсилайте звернення повторно; зателефонуйте студії.'); } } catch {}

@@ -1,5 +1,14 @@
 # QS Deployment: індекс передачі та runbook
 
+## Поточний LOCAL scope — 4 листопада 2026
+
+Нова content-ready гілка від actual main Night Luxury має окремий owner preview.
+Попередній B approval не схвалює нові кейси/calculator/team/mobile/trust/SEO bytes.
+Немає push/PR/main/server/Google activation або real forms authority. Optional
+estimate потребує окремої canonical backend реалізації після web writer stop,
+потім нового combined build та незалежного QA. Конкретний контент надійде пізніше.
+Чинний порядок approval нижче зберігається; три варіанти — попередній scope.
+
 ## Чинна owner policy QS — 2 листопада 2026
 
 Правки в окремій гілці → локальний перегляд власником → **явне схвалення

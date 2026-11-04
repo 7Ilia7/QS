@@ -1,0 +1,53 @@
+{
+  "url": "http://127.0.0.1:8044/",
+  "viewport": [
+    390,
+    844
+  ],
+  "domContentLoaded_ms": 85.30000001192093,
+  "load_ms": 90.20000004768372,
+  "resources": [
+    {
+      "path": "/img/optimized/studio-640.webp",
+      "encoded_bytes": 19796
+    },
+    {
+      "path": "/forms.css",
+      "encoded_bytes": 4252
+    },
+    {
+      "path": "/styles.css",
+      "encoded_bytes": 41010
+    },
+    {
+      "path": "/forms.js",
+      "encoded_bytes": 13375
+    },
+    {
+      "path": "/script.js",
+      "encoded_bytes": 20935
+    },
+    {
+      "path": "/img/optimized/logo.webp",
+      "encoded_bytes": 9216
+    },
+    {
+      "path": "/img/optimized/hero-1120.webp",
+      "encoded_bytes": 62748
+    },
+    {
+      "path": "/content.json",
+      "encoded_bytes": 2304
+    },
+    {
+      "path": "/img/optimized/logo.webp",
+      "encoded_bytes": 9216
+    }
+  ],
+  "overflow": false,
+  "hero_dimensions": [
+    390,
+    519
+  ],
+  "limitations": "Single unthrottled localhost cold browser; external map blocked. Not live/Core Web Vitals acceptance or a percentage speed claim."
+}

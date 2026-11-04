@@ -1,3 +1,3 @@
 User-agent: *
-Allow: /
-Sitemap: https://quality-service-hair.165-245-223-138.sslip.io/sitemap.xml
+Disallow: /
+# Local owner preview only. Publication/indexing needs the chosen domain and approval.

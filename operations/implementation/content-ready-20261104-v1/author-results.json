@@ -1,0 +1,75 @@
+{
+  "results": [
+    {
+      "name": "default content slots have no fabricated cases, portraits, quotes or review form",
+      "status": "PASS",
+      "time": "2026-11-04T14:41:53.061Z"
+    },
+    {
+      "name": "comparison keyboard and touch plus capsule lightbox",
+      "status": "PASS",
+      "time": "2026-11-04T14:41:53.379Z"
+    },
+    {
+      "name": "all original25 price rows/59 values unchanged",
+      "status": "PASS",
+      "time": "2026-11-04T14:41:53.392Z"
+    },
+    {
+      "name": "calculator breakdown, exact edges, invalid and reset",
+      "status": "PASS",
+      "time": "2026-11-04T14:41:54.344Z"
+    },
+    {
+      "name": "unsupported backend blocks attachment, ordinary callback stays available",
+      "status": "PASS",
+      "time": "2026-11-04T14:41:54.577Z"
+    },
+    {
+      "name": "FAQ duration/care remain drafts; source facts and no fake rating schema",
+      "status": "PASS",
+      "time": "2026-11-04T14:41:54.898Z"
+    },
+    {
+      "name": "responsive layouts, image decoding, single safe-area-aware mobile action",
+      "status": "PASS",
+      "time": "2026-11-04T14:41:58.166Z"
+    },
+    {
+      "name": "empty/malformed content falls back safely; no HTML execution or invented attribution",
+      "status": "PASS",
+      "time": "2026-11-04T14:41:58.598Z"
+    },
+    {
+      "name": "supplied content renders as text and source links, never inline HTML",
+      "status": "PASS",
+      "time": "2026-11-04T14:41:58.991Z"
+    },
+    {
+      "name": "matched-image component test uses same local asset only, no client claim persisted",
+      "status": "PASS",
+      "time": "2026-11-04T14:41:59.418Z"
+    },
+    {
+      "name": "supported local mocked API sends exact context, freezes request snapshot and resets",
+      "status": "PASS",
+      "time": "2026-11-04T14:42:00.111Z"
+    },
+    {
+      "name": "ordinary mocked callback has no estimate and safe failure remains editable",
+      "status": "PASS",
+      "time": "2026-11-04T14:42:00.707Z"
+    },
+    {
+      "name": "uncertain mocked estimate request remains locked with no blind replay",
+      "status": "PASS",
+      "time": "2026-11-04T14:42:01.275Z"
+    }
+  ],
+  "forwardedPOST": 0,
+  "mockedPOST": 3,
+  "unexpectedPOST": 0,
+  "tier": "AUTHOR REAL LOCAL UI + explicit mocked capabilities/POST; no provider delivery",
+  "independentQA": "PENDING",
+  "nativeKeyboard": "NOT RUN; focus and viewport/browser behavior only"
+}

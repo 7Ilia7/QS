@@ -7,3 +7,4 @@
 /* The private review is commented during owner comparison: retain two real cards. */
 .map-callback-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.map-callback-grid>div:first-child{grid-column:auto}
 @media(max-width:760px){.map-callback-grid{grid-template-columns:minmax(0,1fr)}}
+.callback-estimate{margin:0 0 24px;padding:20px;background:#171c12;border:1px solid #7d704f}.callback-estimate .eyebrow{font-size:9px;margin-bottom:14px}.callback-estimate>p:not(.eyebrow){font-size:12px;line-height:1.9}.customer-form .estimate-consent{display:flex;align-items:flex-start;gap:12px;font-size:12px;line-height:1.7;margin-top:18px}.estimate-consent input{width:20px;height:20px;flex:0 0 20px;margin-top:2px;accent-color:var(--gold)}.callback-estimate .content-status{font-size:11px;color:#c8bfa5;margin-top:13px}.customer-form .btn:disabled{cursor:not-allowed}.callback-estimate input:disabled{opacity:.7}.callback-estimate .hair-extra{font-size:11px!important}
