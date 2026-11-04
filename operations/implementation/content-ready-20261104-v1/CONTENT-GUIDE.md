@@ -1,6 +1,7 @@
 # Content insertion guide — local owner preview
 
-Edit site/content.json (schema qs.content.v1). It contains no credentials and is
+Edit the plain object in site/content-data.js (schema qs.content.v1). Keep its
+window.qsStudioContent assignment wrapper and JSON-compatible quoted keys/values. It contains no credentials and is
 the only source for the new cases/team/reviews/FAQ. Keep mode owner-preview until
 the exact new content/layout has owner approval. Ready means supplied material,
 not automatic release authority. Night Luxury identity and authoritative prices
@@ -54,7 +55,7 @@ extensions webp,avif,jpg,jpeg,png. No remote image URLs, query strings, traversa
 inline HTML or executable markup. Text renders as text nodes. New local assets
 must be added explicitly and sorted in release/allowlist.json, with accurate
 dimensions and source rights; run asset/content and browser checks.
-The JSON is fetched after load; missing/invalid JSON preserves safe placeholders,
+The small deferred JS configuration loads before the main controller. Missing\ndata or an invalid schema preserves safe placeholders,
 existing prices/gallery/contact and static FAQ. Do not rely on draft UI labels
 as proof of independent content verification.
 

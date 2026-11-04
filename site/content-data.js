@@ -1,4 +1,5 @@
-{
+// Owner-editable content only; keep draft slots until real material is approved.
+window.qsStudioContent = {
   "schema": "qs.content.v1",
   "mode": "owner-preview",
   "publication": {
@@ -71,4 +72,4 @@
       "status": "existing-facts"
     }
   ]
-}
+};

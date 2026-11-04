@@ -12,12 +12,12 @@
   },
   "public_allowlist_files": 28,
   "public_text_bytes": {
-    "index.html": 40592,
+    "index.html": 40637,
     "styles.css": 41010,
     "forms.css": 4252,
-    "script.js": 20957,
+    "script.js": 20865,
     "forms.js": 13375,
-    "content.json": 2304
+    "content-data.js": 2412
   },
   "optimized_image_bytes": {
     "img/optimized/before-after-480.webp": 8994,

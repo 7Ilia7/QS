@@ -19,7 +19,7 @@
   original gallery; live work-only breakdown and discuss-to-callback; team slots;
   deliberate compact mobile action; genuine-source review/FAQ components; safe
   local domain/SEO/Ads prep. Owner content is later, not a technical blocker.
-- Content source: site/content.json; CONTENT-GUIDE.md specifies exact fields,
+- Content source: site/content-data.js; CONTENT-GUIDE.md specifies exact fields,
   photos/framing/dimensions/weight, source/consent, empty-state behavior and scope.
 - All25existing price rows/59values remain. Master/Олена,50/100/200 half-open
   intervals, decimal neighbors, hair extra and optional1300 are preserved.
@@ -34,7 +34,7 @@
   writer stop and its allowed admission, then create NEW combined commit/build
   and route independent QA. Existing web checks do not imply backend completion.
 - Changed served files: index.html,script.js,forms.js,styles.css,forms.css,
-  robots.txt plus content.json. release/allowlist.json adds only content.json
+  robots.txt plus content-data.js. release/allowlist.json adds only content-data.js
   (28public/11private). No new images, libs, fake domain/tag IDs or analytics.
 - No private review restoration; complete original form remains in HTML comment.
   Backend/runtime data, privacy document, phone/map/business facts, CI/provider

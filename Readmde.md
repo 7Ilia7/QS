@@ -103,7 +103,7 @@ keyboard/touch case comparison slots and capsule lightbox, detailed calculator
 and discuss-to-callback context, team slots, compact mobile booking, genuine-review
 and FAQ components are ready for owner content. All25price rows/59values remain.
 Default content contains no invented people, quotes, ratings or new case pair.
-Edit site/content.json using operations/implementation/content-ready-20261104-v1/CONTENT-GUIDE.md.
+Edit site/content-data.js using operations/implementation/content-ready-20261104-v1/CONTENT-GUIDE.md.
 
 Local preview http://127.0.0.1:8044/ stays running. Thirteen author groups pass;
 three explicit mocked POSTs, ZERO forwardedPOST/provider effects. Optional estimate
@@ -116,4 +116,3 @@ Draft preview is noindex/robots-blocked; existing sslip metadata is baseline,
 chosen domain and account activation remain pending. No server or Google changes.
 READY_FOR_QA and exact external freeze/build paths are in the implementation folder.
 Owner local approval remains pending; prior B approval does not approve new bytes.
-

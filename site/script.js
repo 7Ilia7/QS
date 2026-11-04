@@ -268,10 +268,13 @@ function renderFAQ(entries) {
   valid.forEach(item=>{const d=node('details');d.append(node('summary','',text(item.question,180)));const approved=['ready','existing-facts'].includes(item.status)&&text(item.answer,1600);if(!approved)d.append(draftBadge('Відповідь готується'));d.append(node('p','',approved?text(item.answer,1600):'Відповідь студії додамо після погодження. Конкретні деталі можна уточнити під час консультації.'));list.append(d);});
 }
 renderCases([]);renderTeam([]);
-fetch('content.json',{cache:'no-cache'}).then(response=>{if(!response.ok)throw Error('content');return response.json();}).then(content=>{
-  if(content.schema!=='qs.content.v1')throw Error('schema');
+try {
+  const content = window.qsStudioContent;
+  if(content?.schema!=='qs.content.v1')throw Error('schema');
   renderCases(content.cases);renderTeam(content.team);renderReviews(content.reviews);renderFAQ(content.faq);scheduleBooking();
-}).catch(()=>{document.getElementById('content-load-status').textContent='Нові матеріали поки недоступні. Поточні роботи, прайс та контакти залишаються доступними.';});
+} catch {
+  document.getElementById('content-load-status').textContent='Нові матеріали поки недоступні. Поточні роботи, прайс та контакти залишаються доступними.';
+}
 document.querySelectorAll('[data-studio-lightbox]').forEach(link=>link.addEventListener('click',event=>{
   if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||!lightbox?.showModal)return;
   event.preventDefault();lightboxImage.src=link.getAttribute('href');lightboxImage.alt=link.querySelector('img').alt;

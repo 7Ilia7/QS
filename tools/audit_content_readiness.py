@@ -21,7 +21,8 @@ class Meta(HTMLParser):
 def inspect(origin=None):
     html = (ROOT/'site/index.html').read_text()
     parsed = Meta(); parsed.feed(html)
-    content = json.loads((ROOT/'site/content.json').read_text())
+    content_source = (ROOT/'site/content-data.js').read_text()
+    content = json.loads(content_source.split('window.qsStudioContent = ',1)[1].strip().removesuffix(';'))
     allow = json.loads((ROOT/'release/allowlist.json').read_text())
     image_sizes = {str(f.relative_to(ROOT/'site')):f.stat().st_size for f in sorted((ROOT/'site/img/optimized').glob('*')) if f.is_file()}
     result = {
@@ -34,7 +35,7 @@ def inspect(origin=None):
         'sitemap_retained':(ROOT/'site/sitemap.xml').read_text(),
         'favicon':{'path':parsed.links.get('icon'),'exists':(ROOT/'site'/str(parsed.links.get('icon'))).is_file()},
         'public_allowlist_files':len(allow['public']),
-        'public_text_bytes':{f:(ROOT/'site'/f).stat().st_size for f in ['index.html','styles.css','forms.css','script.js','forms.js','content.json']},
+        'public_text_bytes':{f:(ROOT/'site'/f).stat().st_size for f in ['index.html','styles.css','forms.css','script.js','forms.js','content-data.js']},
         'optimized_image_bytes':image_sizes,
         'review_schema_present':bool(re.search(r'"(?:aggregateRating|reviewRating)"',html)),
         'analytics_activation':'NONE added; accounts/IDs/configuration NOT CHECKED',
