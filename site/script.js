@@ -244,8 +244,16 @@ function renderTeam(entries) {
     person=person&&typeof person==='object'?person:{};
     const known=person.id==='olena',name=text(person.name,100)||(known?'Олена':'Ім’я майстра додамо'),role=text(person.role,100)||(known?'Тімлідер':'Майстер');
     const card=node('article','team-profile'),portrait=node('div','team-portrait');
-    if(person.status==='ready'&&validPhoto(person.portrait))portrait.append(contentImage(person.portrait));
-    else{portrait.append(node('span','portrait-number','0'+(index+1)),node('span','portrait-caption','Місце для погодженого портрета'));}
+    function portraitPlaceholder(unavailable = false) {
+      portrait.replaceChildren(node('span','portrait-number','0'+(index+1)),node('span','portrait-caption',unavailable?'Фото поки недоступне. Очікуємо погоджений портрет.':'Місце для погодженого портрета'));
+    }
+    if(person.status==='ready'&&validPhoto(person.portrait)) {
+      const image = contentImage(person.portrait);
+      const unavailable = () => { if (portrait.contains(image)) portraitPlaceholder(true); };
+      image.addEventListener('error',unavailable,{once:true});
+      image.addEventListener('load',() => image.decode().catch(unavailable),{once:true});
+      portrait.append(image);
+    } else portraitPlaceholder();
     const copy=node('div','team-copy');copy.append(draftBadge(person.status==='ready'?'Команда студії':'Профіль очікує матеріалів'),node('p','team-role',role),node('h3','',name));
     const specialties=Array.isArray(person.specialties)?person.specialties.map(s=>text(s,100)).filter(Boolean).slice(0,5):[];
     if(person.status==='ready'&&specialties.length)copy.append(node('p','team-specialties',specialties.join(' · ')));

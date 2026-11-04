@@ -116,3 +116,12 @@ Draft preview is noindex/robots-blocked; existing sslip metadata is baseline,
 chosen domain and account activation remain pending. No server or Google changes.
 READY_FOR_QA and exact external freeze/build paths are in the implementation folder.
 Owner local approval remains pending; prior B approval does not approve new bytes.
+# Scoped portrait fallback correction — 4 November 2026
+
+Independent P2 QS-FE-20261104-01 corrected on an isolated descendant of combined
+backend0c960085. Failed ready-portrait load/decode now shows the neutral placeholder
+and unavailable-photo note; name/role remain. Valid/default behavior unchanged.
+Ten focused390/320author scenarios pass,0POST; private backend11files preserved.
+See operations/implementation/portrait-fix-20261104-v1/READY_FOR_QA.md and the
+external freeze for exact source/build/mock preview8047. Independent retest and
+owner approval remain pending; previous sources/previews preserved. No publication.
