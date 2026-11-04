@@ -6,6 +6,7 @@ import hmac
 import html
 import ipaddress
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -24,6 +25,35 @@ TTL = 86400
 TARGET = '-4907639564'
 
 
+def normalize_estimate(value):
+    if not isinstance(value, dict) or set(value) != {'version', 'master', 'grams', 'removal'}:
+        raise ValueError('estimate fields')
+    if type(value['version']) is not int or value['version'] != 1 or value['master'] not in ('master', 'olena') or type(value['removal']) is not bool:
+        raise ValueError('estimate schema')
+    grams = value['grams']
+    try:
+        finite = type(grams) in (int, float) and math.isfinite(grams)
+    except OverflowError:
+        finite = False
+    if not finite or grams <= 0:
+        raise ValueError('estimate grams')
+    # Normalize equivalent JSON100 and100.0 without rounding decimal neighbors.
+    if type(grams) is float and grams.is_integer():
+        grams = int(grams)
+    return {'version': 1, 'master': value['master'], 'grams': grams, 'removal': value['removal']}
+
+
+def estimate_summary(estimate):
+    grams = estimate['grams']
+    tier = 0 if grams < 50 else 1 if grams < 100 else 2 if grams < 200 else 3
+    work = {'master': (3100, 5300, 7500, 9700), 'olena': (4400, 6600, 8800, 11000)}[estimate['master']][tier]
+    removal = 1300 if estimate['removal'] else 0
+    master = 'Master' if estimate['master'] == 'master' else 'Team Leader Олена'
+    return [('РОЗРАХУНОК', f'{master}; {grams} г'), ('РОБОТА', f'{work} грн'),
+            ('ЗНЯТТЯ', f'{removal} грн'), ('РАЗОМ ЗА РОБОТУ', f'{work+removal} грн'),
+            ('ВОЛОССЯ', 'не включено, оплачується окремо')]
+
+
 def valid_id(value):
     try:
         return isinstance(value, str) and str(uuid.UUID(value, version=4)) == value and uuid.UUID(value).version == 4
@@ -32,11 +62,15 @@ def valid_id(value):
 
 
 def validate(data):
-    if not isinstance(data, dict) or set(data) - {'request_id', 'type', 'name', 'phone', 'review', 'consent', 'source'}:
+    if not isinstance(data, dict) or set(data) - {'request_id', 'type', 'name', 'phone', 'review', 'consent', 'source', 'estimate'}:
         raise ValueError('fields')
     if not valid_id(data.get('request_id')) or data.get('type') not in ('callback', 'review') or data.get('consent') is not True or data.get('source') != 'qc-web':
         raise ValueError('schema')
     result = dict(data)
+    if 'estimate' in data:
+        if data['type'] != 'callback':
+            raise ValueError('estimate callback only')
+        result['estimate'] = normalize_estimate(data['estimate'])
     for field in ('name', 'review', 'phone'):
         if field in data:
             if not isinstance(data[field], str) or any(ord(c) < 32 and c not in '\n\t' for c in data[field]):
@@ -158,6 +192,8 @@ class Telegram:
         fields = [('TYPE', label), ('ID', data['request_id']), ('SOURCE', 'qc-web'),
                   ('UTC', time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()))]
         fields += [(key.upper(), data[key]) for key in ('name', 'phone', 'review') if data.get(key)]
+        if 'estimate' in data:
+            fields += estimate_summary(data['estimate'])
         text = '\n'.join(html.escape(key + ': ' + value) for key, value in fields)
         body = json.dumps({'chat_id': self.target, 'text': text, 'parse_mode': 'HTML'}).encode()
         request = urllib.request.Request('https://api.telegram.org/bot' + self.token + '/sendMessage', data=body,
@@ -192,6 +228,8 @@ class App:
             return 200, {'status': 'ok', 'service': 'qs-forms', 'version': 1}
         if headers.get('origin') not in (None, self.origin) or (method == 'POST' and headers.get('origin') != self.origin):
             return fail(403, 'origin')
+        if method == 'GET' and path == '/api/forms/capabilities':
+            return 200, {'estimate': {'version': 1}}
         if method == 'GET' and url.path == '/api/forms/status':
             query = urllib.parse.parse_qs(url.query)
             rid = query.get('request_id', [None])[0]
@@ -255,6 +293,8 @@ class App:
             self.buckets[peer] = values + [now]
             self.global_times.append(now)
             self.store.data['records'][rid] = {'type': data['type'], 'digest': digest, 'created': now, 'status': 'pending'}
+            if 'estimate' in data:
+                self.store.data['records'][rid]['estimate'] = dict(data['estimate'])
             if rid in self.store.pairs:
                 self.store.data['spent_synthetic'].append(rid)
             try:

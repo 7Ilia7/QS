@@ -1,5 +1,16 @@
 # QC local backend correction, 23 October 2026
 
+4 November local estimate extension: see
+operations/implementation/estimate-context-20261104-v1/READY_FOR_QA.md in source.
+Optional estimate is callback-only, schema version1; prices derived server-side.
+GET /api/forms/capabilities returns {"estimate":{"version":1}}, not delivery proof.
+Estimate normalized machine fields enter fingerprint/private technical record;
+status/receipt excludes them. No new runtime settings or migrations required.
+Historical app/freeze.py/original-manifest/test-results identify Oct23 evidence;
+current combined provenance is automation/build.py + new external freeze.json.
+DO NOT run historical freeze.py to describe current source. No deployment authority
+comes from this local increment. Existing39member allowlist remains28public/11private.
+
 Exact child evt-owner-513fc12254e755fb15d617da, parent43456f0ed903f454041d3455.
 Owner-scoped local B1/B2 increment; independent review and release are separate.
 See api-deployment-agreement.md for early frontend/deployment agreement and
