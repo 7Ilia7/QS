@@ -23,8 +23,11 @@ Local hash не доводить live freshness; missing не дозволяє a
 изменённую после просмотра версию нужно показать заново. Полученное одобрение
 не запрашивать повторно для той же версии и неизменного scope.
 
-Текущая работа — три локальных визуальных варианта для выбора, без автоматического
-выбора победителя, push/PR/merge/deploy и серверных проверок. Локальные commits допустимы.
+Текущая работа от 04.11.2026 — локальная content-ready ветка Night Luxury:
+кейсы, расчёт/callback, команда, mobile booking, отзывы/FAQ и domain readiness.
+Контент владелец предоставит позже. Локальные commits допустимы; push/PR/merge/deploy,
+серверные/Google-account изменения и real forms не разрешены. Предыдущее одобрение B
+не одобряет новые bytes. Backend estimate — отдельный canonical writer после web stop.
 Existing AUTO после будущего одобренного main merge остаётся настроенным; workflow,
 environment, secrets и глобальные policies не менять. Подробности и перенос этих
 инструкций в каждый изолированный worktree: `operations/deployment/README.md`.

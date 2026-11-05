@@ -1,0 +1,69 @@
+{
+  "results": [
+    {
+      "width": 390,
+      "mode": "404",
+      "status": "PASS",
+      "time": "2026-11-04T19:20:19.901Z"
+    },
+    {
+      "width": 390,
+      "mode": "corrupt",
+      "status": "PASS",
+      "time": "2026-11-04T19:20:20.582Z"
+    },
+    {
+      "width": 390,
+      "mode": "decode-reject",
+      "status": "PASS",
+      "time": "2026-11-04T19:20:21.103Z"
+    },
+    {
+      "width": 390,
+      "mode": "valid",
+      "status": "PASS",
+      "time": "2026-11-04T19:20:21.572Z"
+    },
+    {
+      "width": 390,
+      "mode": "default",
+      "status": "PASS",
+      "time": "2026-11-04T19:20:22.064Z"
+    },
+    {
+      "width": 320,
+      "mode": "404",
+      "status": "PASS",
+      "time": "2026-11-04T19:20:22.596Z"
+    },
+    {
+      "width": 320,
+      "mode": "corrupt",
+      "status": "PASS",
+      "time": "2026-11-04T19:20:23.086Z"
+    },
+    {
+      "width": 320,
+      "mode": "decode-reject",
+      "status": "PASS",
+      "time": "2026-11-04T19:20:23.577Z"
+    },
+    {
+      "width": 320,
+      "mode": "valid",
+      "status": "PASS",
+      "time": "2026-11-04T19:20:24.069Z"
+    },
+    {
+      "width": 320,
+      "mode": "default",
+      "status": "PASS",
+      "time": "2026-11-04T19:20:24.555Z"
+    }
+  ],
+  "blockedPOST": 0,
+  "realPOST": 0,
+  "scope": "portrait load/decode fallback + valid/default + nearby content/mobile CTA; explicit LOCAL MOCK fixtures",
+  "independentQA": "PENDING canonical retest",
+  "no_full_calc_or_context_matrix_repeated": true
+}

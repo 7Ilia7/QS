@@ -1,6 +1,7 @@
 {
   "schema": "website.source-allowlist.v1",
   "public": [
+    "content-data.js",
     "forms.css",
     "forms.js",
     "img/optimized/before-after-480.webp",

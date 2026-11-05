@@ -1,0 +1,43 @@
+{
+  "evidence_tier": "LOCAL SOURCE; no domain/provider/network verification",
+  "preview_noindex": true,
+  "preview_robots": "User-agent: *\nDisallow: /\n# Local owner preview only. Publication/indexing needs the chosen domain and approval.\n",
+  "baseline_canonical_retained": "https://quality-service-hair.165-245-223-138.sslip.io/",
+  "baseline_og_url": "https://quality-service-hair.165-245-223-138.sslip.io/",
+  "baseline_og_image": "https://quality-service-hair.165-245-223-138.sslip.io/img/optimized/hero-1120.webp",
+  "sitemap_retained": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc>https://quality-service-hair.165-245-223-138.sslip.io/</loc></url><url><loc>https://quality-service-hair.165-245-223-138.sslip.io/privacy.html</loc></url></urlset>\n",
+  "favicon": {
+    "path": "img/optimized/logo.webp",
+    "exists": true
+  },
+  "public_allowlist_files": 28,
+  "public_text_bytes": {
+    "index.html": 40637,
+    "styles.css": 41010,
+    "forms.css": 4252,
+    "script.js": 20865,
+    "forms.js": 13375,
+    "content-data.js": 2412
+  },
+  "optimized_image_bytes": {
+    "img/optimized/before-after-480.webp": 8994,
+    "img/optimized/before-after-960.webp": 23642,
+    "img/optimized/capsules-480.webp": 20050,
+    "img/optimized/capsules-960.webp": 54410,
+    "img/optimized/hero-1120.webp": 62748,
+    "img/optimized/hero-640.webp": 27164,
+    "img/optimized/logo.webp": 9216,
+    "img/optimized/straight-480.webp": 55738,
+    "img/optimized/straight-960.webp": 145540,
+    "img/optimized/studio-1120.webp": 39578,
+    "img/optimized/studio-640.webp": 19796,
+    "img/optimized/waves-480.webp": 34204,
+    "img/optimized/waves-960.webp": 104648
+  },
+  "review_schema_present": false,
+  "analytics_activation": "NONE added; accounts/IDs/configuration NOT CHECKED",
+  "content_mode": "owner-preview",
+  "chosen_public_origin": null,
+  "domain_https_redirect_search_console": "NOT CHECKED; domain/account/release authority required",
+  "publication_ready": false
+}
