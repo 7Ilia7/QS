@@ -125,3 +125,15 @@ Ten focused390/320author scenarios pass,0POST; private backend11files preserved.
 See operations/implementation/portrait-fix-20261104-v1/READY_FOR_QA.md and the
 external freeze for exact source/build/mock preview8047. Independent retest and
 owner approval remain pending; previous sources/previews preserved. No publication.
+# Five screenshot corrections — 5 November 2026
+
+Isolated descendant of095e on codex/qs-screenshot-fixes-20261105 preserves its
+archive/old preview and all private backend11files. Hero actions unified/free
+consultation label consolidated; marked small captions removed. Wide headings
+and services copy cleaned; case/capsule heights aligned; original gallery now
+keyboard/native-touch-scroll carousel. Videos open and prepare metadata on page
+load, with native user Play only; retry preserved. Master chevron inset/padding fixed.
+Eight local author groups and18bounded mediaRange byte checks pass;0POST.
+Functional no-delivery demo8048 remains running; see the implementation READY and
+external freeze for exact commit/build/digests/PID. Independent affected QA follows.
+No main/server publication or real sends; existing source archives/previews preserved.

@@ -1,0 +1,132 @@
+{
+  "checks": [
+    {
+      "path": "video/optimized/complex-color-transitions.mp4",
+      "request_range": "bytes=0-31",
+      "status": 206,
+      "response_range": "bytes 0-31/8433949",
+      "bytes": 32
+    },
+    {
+      "path": "video/optimized/complex-color-transitions.mp4",
+      "request_range": "bytes=0-",
+      "status": 206,
+      "response_range": "bytes 0-524287/8433949",
+      "bytes": 524288
+    },
+    {
+      "path": "video/optimized/complex-color-transitions.mp4",
+      "request_range": "bytes=-32",
+      "status": 206,
+      "response_range": "bytes 8433917-8433948/8433949",
+      "bytes": 32
+    },
+    {
+      "path": "video/optimized/microcapsules-130g.mp4",
+      "request_range": "bytes=0-31",
+      "status": 206,
+      "response_range": "bytes 0-31/3982220",
+      "bytes": 32
+    },
+    {
+      "path": "video/optimized/microcapsules-130g.mp4",
+      "request_range": "bytes=0-",
+      "status": 206,
+      "response_range": "bytes 0-524287/3982220",
+      "bytes": 524288
+    },
+    {
+      "path": "video/optimized/microcapsules-130g.mp4",
+      "request_range": "bytes=-32",
+      "status": 206,
+      "response_range": "bytes 3982188-3982219/3982220",
+      "bytes": 32
+    },
+    {
+      "path": "video/optimized/premium-blond-microcapsule.mp4",
+      "request_range": "bytes=0-31",
+      "status": 206,
+      "response_range": "bytes 0-31/11130695",
+      "bytes": 32
+    },
+    {
+      "path": "video/optimized/premium-blond-microcapsule.mp4",
+      "request_range": "bytes=0-",
+      "status": 206,
+      "response_range": "bytes 0-524287/11130695",
+      "bytes": 524288
+    },
+    {
+      "path": "video/optimized/premium-blond-microcapsule.mp4",
+      "request_range": "bytes=-32",
+      "status": 206,
+      "response_range": "bytes 11130663-11130694/11130695",
+      "bytes": 32
+    },
+    {
+      "path": "video/optimized/thickening-natural-length.mp4",
+      "request_range": "bytes=0-31",
+      "status": 206,
+      "response_range": "bytes 0-31/1705355",
+      "bytes": 32
+    },
+    {
+      "path": "video/optimized/thickening-natural-length.mp4",
+      "request_range": "bytes=0-",
+      "status": 206,
+      "response_range": "bytes 0-524287/1705355",
+      "bytes": 524288
+    },
+    {
+      "path": "video/optimized/thickening-natural-length.mp4",
+      "request_range": "bytes=-32",
+      "status": 206,
+      "response_range": "bytes 1705323-1705354/1705355",
+      "bytes": 32
+    },
+    {
+      "path": "video/optimized/volume-after-correction.mp4",
+      "request_range": "bytes=0-31",
+      "status": 206,
+      "response_range": "bytes 0-31/5192189",
+      "bytes": 32
+    },
+    {
+      "path": "video/optimized/volume-after-correction.mp4",
+      "request_range": "bytes=0-",
+      "status": 206,
+      "response_range": "bytes 0-524287/5192189",
+      "bytes": 524288
+    },
+    {
+      "path": "video/optimized/volume-after-correction.mp4",
+      "request_range": "bytes=-32",
+      "status": 206,
+      "response_range": "bytes 5192157-5192188/5192189",
+      "bytes": 32
+    },
+    {
+      "path": "video/optimized/warm-chestnut-170g.mp4",
+      "request_range": "bytes=0-31",
+      "status": 206,
+      "response_range": "bytes 0-31/3156188",
+      "bytes": 32
+    },
+    {
+      "path": "video/optimized/warm-chestnut-170g.mp4",
+      "request_range": "bytes=0-",
+      "status": 206,
+      "response_range": "bytes 0-524287/3156188",
+      "bytes": 524288
+    },
+    {
+      "path": "video/optimized/warm-chestnut-170g.mp4",
+      "request_range": "bytes=-32",
+      "status": 206,
+      "response_range": "bytes 3156156-3156187/3156188",
+      "bytes": 32
+    }
+  ],
+  "invalid_range416": true,
+  "external_network": 0
+}

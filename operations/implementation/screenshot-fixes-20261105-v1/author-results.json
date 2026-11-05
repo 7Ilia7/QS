@@ -1,0 +1,223 @@
+{
+  "results": [
+    {
+      "name": "videos prepare on initial navigation, expanded, paused and no autoplay",
+      "status": "PASS",
+      "time": "2026-11-05T16:26:35.421Z"
+    },
+    {
+      "name": "hero approved copy, unified aligned actions, decorative captions removed",
+      "status": "PASS",
+      "time": "2026-11-05T16:26:36.009Z"
+    },
+    {
+      "name": "headings wide single-line, natural mobile and services text cleanup",
+      "status": "PASS",
+      "time": "2026-11-05T16:26:36.360Z"
+    },
+    {
+      "name": "adjacent case/capsule cards equal height; mobile stacks without stretched blank",
+      "status": "PASS",
+      "time": "2026-11-05T16:26:36.527Z"
+    },
+    {
+      "name": "photo carousel arrows, keyboard, native horizontal input and modal",
+      "status": "PASS",
+      "time": "2026-11-05T16:26:39.183Z"
+    },
+    {
+      "name": "select has one inset chevron, native keyboard selection and no border overlap",
+      "status": "PASS",
+      "time": "2026-11-05T16:26:39.269Z"
+    },
+    {
+      "name": "initial media failure exposes retry and retry prepares without playing",
+      "status": "PASS",
+      "time": "2026-11-05T16:26:39.597Z"
+    },
+    {
+      "name": "first video starts only after user native Play action",
+      "status": "PASS",
+      "time": "2026-11-05T16:26:39.913Z"
+    }
+  ],
+  "mediaRequests": [
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/premium-blond-microcapsule.mp4",
+      "range": "bytes=0-",
+      "time": 1793895995182
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/volume-after-correction.mp4",
+      "range": "bytes=0-",
+      "time": 1793895995348
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/warm-chestnut-170g.mp4",
+      "range": "bytes=0-",
+      "time": 1793895995351
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/complex-color-transitions.mp4",
+      "range": "bytes=0-",
+      "time": 1793895995351
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/thickening-natural-length.mp4",
+      "range": "bytes=0-",
+      "time": 1793895995351
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/microcapsules-130g.mp4",
+      "range": "bytes=0-",
+      "time": 1793895995352
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/warm-chestnut-170g.mp4",
+      "range": "bytes=524288-",
+      "time": 1793895999662
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/premium-blond-microcapsule.mp4",
+      "range": "bytes=524288-",
+      "time": 1793895999663
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/complex-color-transitions.mp4",
+      "range": "bytes=524288-",
+      "time": 1793895999664
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/microcapsules-130g.mp4",
+      "range": "bytes=524288-",
+      "time": 1793895999664
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/volume-after-correction.mp4",
+      "range": "bytes=524288-",
+      "time": 1793895999664
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/premium-blond-microcapsule.mp4",
+      "range": "bytes=1048576-",
+      "time": 1793895999721
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/premium-blond-microcapsule.mp4",
+      "range": "bytes=1572864-",
+      "time": 1793895999761
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/premium-blond-microcapsule.mp4",
+      "range": "bytes=2097152-",
+      "time": 1793895999800
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/premium-blond-microcapsule.mp4",
+      "range": "bytes=2621440-",
+      "time": 1793895999831
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/premium-blond-microcapsule.mp4",
+      "range": "bytes=3145728-",
+      "time": 1793895999912
+    }
+  ],
+  "mediaResponses": [
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/premium-blond-microcapsule.mp4",
+      "status": 206,
+      "length": "524288",
+      "range": "bytes 0-524287/11130695"
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/volume-after-correction.mp4",
+      "status": 206,
+      "length": "524288",
+      "range": "bytes 0-524287/5192189"
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/warm-chestnut-170g.mp4",
+      "status": 206,
+      "length": "524288",
+      "range": "bytes 0-524287/3156188"
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/complex-color-transitions.mp4",
+      "status": 206,
+      "length": "524288",
+      "range": "bytes 0-524287/8433949"
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/microcapsules-130g.mp4",
+      "status": 206,
+      "length": "524288",
+      "range": "bytes 0-524287/3982220"
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/thickening-natural-length.mp4",
+      "status": 206,
+      "length": "524288",
+      "range": "bytes 0-524287/1705355"
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/warm-chestnut-170g.mp4",
+      "status": 206,
+      "length": "524288",
+      "range": "bytes 524288-1048575/3156188"
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/complex-color-transitions.mp4",
+      "status": 206,
+      "length": "524288",
+      "range": "bytes 524288-1048575/8433949"
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/premium-blond-microcapsule.mp4",
+      "status": 206,
+      "length": "524288",
+      "range": "bytes 524288-1048575/11130695"
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/microcapsules-130g.mp4",
+      "status": 206,
+      "length": "524288",
+      "range": "bytes 524288-1048575/3982220"
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/volume-after-correction.mp4",
+      "status": 206,
+      "length": "524288",
+      "range": "bytes 524288-1048575/5192189"
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/premium-blond-microcapsule.mp4",
+      "status": 206,
+      "length": "524288",
+      "range": "bytes 1048576-1572863/11130695"
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/premium-blond-microcapsule.mp4",
+      "status": 206,
+      "length": "524288",
+      "range": "bytes 1572864-2097151/11130695"
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/premium-blond-microcapsule.mp4",
+      "status": 206,
+      "length": "524288",
+      "range": "bytes 2097152-2621439/11130695"
+    },
+    {
+      "url": "http://127.0.0.1:8048/video/optimized/premium-blond-microcapsule.mp4",
+      "status": 206,
+      "length": "524288",
+      "range": "bytes 2621440-3145727/11130695"
+    }
+  ],
+  "POST": 0,
+  "page_errors": [],
+  "physical_touch_swipe": "NOT RUN; native overflow/scroll-snap and horizontal browser input verified in touch-enabled390/320 contexts",
+  "independentQA": "PENDING",
+  "scope": "author real local UI/HTTP on mock-only API preview; no form sends"
+}

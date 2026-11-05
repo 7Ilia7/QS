@@ -107,55 +107,92 @@ calc?.addEventListener('reset', () => requestAnimationFrame(updateEstimate));
 document.getElementById('calc-booking')?.addEventListener('click', () => openCallback(true));
 updateEstimate();
 
-// Large local videos load after explicit interaction; the map is inline/lazy.
-document.querySelectorAll('.video-load').forEach((button, index) => {
-  const video = button.closest('figure').querySelector('video');
+// Start metadata requests on page load; playback remains a native user action.
+document.querySelectorAll('.video-grid video').forEach((video,index) => {
   const source = video.querySelector('source');
+  const retry = document.createElement('button');
+  retry.className = 'video-retry text-link';
+  retry.type = 'button';
+  retry.textContent = 'Повторити завантаження';
+  retry.hidden = true;
   const status = document.createElement('p');
   status.className = 'video-status';
-  status.id = `video-status-${index}`;
-  status.setAttribute('role', 'status');
-  status.setAttribute('aria-live', 'polite');
-  button.after(status);
-  button.setAttribute('aria-describedby', status.id);
-  video.setAttribute('aria-describedby', status.id);
-  let requested = false, timer;
+  status.id = 'video-status-' + index;
+  status.setAttribute('role','status');
+  status.setAttribute('aria-live','polite');
+  video.after(retry,status);
+  retry.setAttribute('aria-describedby',status.id);
+  video.setAttribute('aria-describedby',status.id);
   function failed() {
-    if (!requested) return;
-    clearTimeout(timer);
-    status.textContent = 'Не вдалося завантажити відео. Перевірте з’єднання та спробуйте ще раз.';
-    button.textContent = 'Спробувати ще раз';
-    button.hidden = false;
-    button.removeAttribute('aria-disabled');
-    video.removeAttribute('aria-busy');
+    status.textContent = 'Не вдалося підготувати відео. Перевірте з’єднання та спробуйте ще раз.';
+    retry.hidden = false;
+    retry.disabled = false;
+    video.dataset.mediaState = 'error';
   }
   function ready() {
-    clearTimeout(timer);
     status.textContent = '';
-    video.removeAttribute('aria-busy');
-    // Keep keyboard focus reachable when the activated retry becomes hidden.
-    if (document.activeElement === button) video.focus();
-    button.hidden = true;
-    button.removeAttribute('aria-disabled');
+    if (document.activeElement === retry) video.focus({preventScroll:true});
+    retry.hidden = true;
+    retry.disabled = false;
+    video.dataset.mediaState = 'metadata-ready';
   }
-  // Failed <source> selection can leave video.error null; listen to both.
-  source.addEventListener('error', failed);
-  video.addEventListener('error', failed);
-  video.addEventListener('loadeddata', ready);
-  video.addEventListener('canplay', ready);
-  button.addEventListener('click', () => {
-    if (video.getAttribute('aria-busy') === 'true') return;
-    requested = true;
-    clearTimeout(timer);
-    status.textContent = 'Завантажуємо відео…';
-    button.setAttribute('aria-disabled', 'true');
-    video.setAttribute('aria-busy', 'true');
-    video.preload = 'auto';
-    source.src = source.dataset.src;
-    video.load();
-    timer = setTimeout(failed, 30000);
+  source.addEventListener('error',failed);
+  video.addEventListener('error',failed);
+  video.addEventListener('loadedmetadata',ready);
+  video.addEventListener('canplay',ready);
+  retry.addEventListener('click',() => {
+    retry.disabled = true;
+    status.textContent = 'Готуємо відео до перегляду…';
+    video.load(); // retry preparation only; never initiate playback
   });
+  if (video.error || video.networkState === 3) failed();
 });
+
+// Native horizontal scrolling gives touch swipe and scroll-snap without blocking taps.
+const galleryTrack = document.getElementById('gallery');
+const galleryItems = [...galleryTrack.querySelectorAll('.work')];
+const galleryPrev = document.getElementById('gallery-prev');
+const galleryNext = document.getElementById('gallery-next');
+let galleryIndex = 0, galleryFrame = 0;
+function galleryStep() {
+  return galleryItems[0].getBoundingClientRect().width + (parseFloat(getComputedStyle(galleryTrack).gap) || 0);
+}
+function updateGallery() {
+  galleryFrame = 0;
+  const step = galleryStep();
+  const visible = Math.max(1,Math.round((galleryTrack.clientWidth + 1) / step));
+  galleryIndex = Math.min(galleryItems.length-1,Math.max(0,Math.round(galleryTrack.scrollLeft / step)));
+  galleryPrev.disabled = galleryTrack.scrollLeft < 2;
+  galleryNext.disabled = galleryTrack.scrollLeft >= galleryTrack.scrollWidth-galleryTrack.clientWidth-2;
+  const last = Math.min(galleryItems.length,galleryIndex+visible);
+  const label = 'Фото ' + (galleryIndex+1) + (last>galleryIndex+1?'–'+last:'') + ' з ' + galleryItems.length;
+  const position = document.getElementById('gallery-position');
+  if(position.textContent!==label)position.textContent=label;
+}
+function moveGallery(index,focusSlide=false) {
+  const max = galleryTrack.scrollWidth-galleryTrack.clientWidth;
+  const left = Math.min(max,Math.max(0,index*galleryStep()));
+  galleryTrack.scrollTo({left,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  if(focusSlide) galleryItems[Math.min(galleryItems.length-1,Math.max(0,index))].focus({preventScroll:true});
+}
+galleryPrev.addEventListener('click',() => moveGallery(galleryIndex-1));
+galleryNext.addEventListener('click',() => moveGallery(galleryIndex+1));
+galleryTrack.addEventListener('keydown',event => {
+  let next;
+  const focusedIndex = galleryItems.indexOf(event.target.closest('.work'));
+  const from = focusedIndex>=0?focusedIndex:galleryIndex;
+  if(event.key==='ArrowLeft')next=from-1;
+  else if(event.key==='ArrowRight')next=from+1;
+  else if(event.key==='Home')next=0;
+  else if(event.key==='End')next=galleryItems.length-1;
+  if(next===undefined)return;
+  event.preventDefault();
+  moveGallery(next,event.target.matches('.work'));
+});
+function scheduleGallery() { if(!galleryFrame)galleryFrame=requestAnimationFrame(updateGallery); }
+galleryTrack.addEventListener('scroll',scheduleGallery,{passive:true});
+window.addEventListener('resize',scheduleGallery);
+updateGallery();
 
 // Booking opens the existing callback without sending a request.
 function openCallback(attach = false, phoneFocus = false) {
